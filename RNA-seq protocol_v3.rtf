@@ -1,0 +1,2256 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1504\cocoasubrtf760
+{\fonttbl\f0\fmodern\fcharset0 Courier;\f1\fmodern\fcharset0 Courier-Bold;\f2\fnil\fcharset0 Menlo-Regular;
+\f3\fnil\fcharset0 Monaco;\f4\froman\fcharset0 Times-Roman;\f5\fnil\fcharset0 AndaleMono;
+\f6\fswiss\fcharset0 Helvetica;\f7\fnil\fcharset0 HelveticaNeue;\f8\fmodern\fcharset0 Courier-Oblique;
+}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue255;\red128\green0\blue0;\red60\green95\blue255;
+\red242\green242\blue242;\red255\green255\blue255;\red255\green0\blue128;\red255\green102\blue102;\red153\green102\blue51;
+\red255\green39\blue18;\red60\green95\blue255;\red0\green0\blue0;\red128\green0\blue64;\red0\green128\blue0;
+\red255\green0\blue0;\red128\green0\blue255;\red0\green64\blue128;\red0\green0\blue0;\red128\green64\blue0;
+\red128\green128\blue128;\red38\green38\blue38;\red0\green0\blue0;\red0\green0\blue0;\red234\green234\blue234;
+\red0\green45\blue153;\red0\green61\blue204;\red46\green111\blue253;\red79\green79\blue79;\red230\green230\blue230;
+\red0\green68\blue254;\red255\green204\blue102;\red219\green230\blue241;\red47\green189\blue29;\red102\green102\blue102;
+\red255\green111\blue207;}
+{\*\expandedcolortbl;;\csgenericrgb\c0\c0\c100000;\csgenericrgb\c50196\c0\c0;\csgenericrgb\c23529\c37255\c100000;
+\csgenericrgb\c94902\c94902\c94902;\csgray\c100000;\csgenericrgb\c100000\c0\c50196;\csgenericrgb\c100000\c40000\c40000;\csgenericrgb\c60000\c40000\c20000;
+\csgenericrgb\c100000\c15294\c7059;\cssrgb\c29815\c47884\c100000;\csgray\c0\c90000;\csgenericrgb\c50196\c0\c25098;\csgenericrgb\c0\c50196\c0;
+\csgenericrgb\c100000\c0\c0;\csgenericrgb\c50196\c0\c100000;\csgenericrgb\c0\c25098\c50196;\cssrgb\c0\c0\c0;\csgenericrgb\c50196\c25098\c0;
+\csgenericrgb\c50196\c50196\c50196;\csgenericrgb\c14902\c14902\c14902;\csgray\c0;\csgray\c0\c85000;\csgenericrgb\c91765\c91765\c91765;
+\csgenericrgb\c0\c17647\c60000;\csgenericrgb\c0\c23922\c80000;\csgenericrgb\c18039\c43529\c99216;\csgenericrgb\c30980\c30980\c30980;\csgenericrgb\c90196\c90196\c90196;
+\csgenericrgb\c0\c26667\c99608;\csgenericrgb\c100000\c80000\c40000;\csgenericrgb\c85882\c90196\c94510;\csgenericrgb\c18431\c74118\c11373;\csgenericrgb\c40000\c40000\c40000;
+\csgenericrgb\c100000\c43529\c81176;}
+\paperw11900\paperh16840\margl1011\margr1011\margb1445\margt1011\vieww20980\viewh12620\viewkind1\viewscale200
+\deftab708
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\fs24 \cf0 ==-==-==-==-==-==-==-==-==-==-==-==-==-==-==-==-==-==-==
+\f1\b\fs36 \
+  Pipeline for RNA-seq analysis
+\fs24 \
+
+\f0\b0 ==-==-==-==-==-==-==-==-==-==-==-==-==-==-==-==-==-==-==\
+\
+\
+Version: 5\
+Date: 23/06/2015\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs16 \cf0 History\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf0 23/06/2015: increase in the tolerance for mismatches with --outFilterMismatchNoverLmax 0.4 --outFilterMismatchNmax 15\
+The pipeline uses T3 .fastq zipped files (.gz) to gain disk space\
+5/05/2015: include mapping in 2 successive passes
+\fs24 \
+
+\fs16 3/12/2014: Includes the most recent pipeline for illumina data\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs24 \cf0 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs36 \cf0  Requirements\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf0 \'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\
+\
+Annotated genome for coding sequences: *.gtf\
+genome fasta file: *.fasta\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0\fs24 \cf0 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs36 \cf0  Quality control\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf0 \'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs22 \cf0 \ul \ulc0 Prepare folders and get the files\
+\
+
+\fs16 \ulnone Prepare folders\
+in folder "monthly" in Vital-IT cluster\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 mkdir RNA-Seq\
+mkdir RNA-Seq/data\
+\cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 Copy of initial fastq files from LIMS website to cluster via wget
+\f0\b0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 cd RNA-Seq/data\cf0 \
+\cf2 wget http://uhts-lgtf.vital-it.ch/symlink/xxxxx.fastq.gz\
+wget http://uhts-lgtf.vital-it.ch/symlink/xxxxx.fastq.gz\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf3 TEST TRIMMOMATIC\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \
+for folder in $(ls -d 
+\f2\fs22 \cf4 \CocoaLigature0 raw_fq
+\f0\fs16 \cf2 \CocoaLigature1 /); do echo "-> "$folder; cd $folder; a=0;for i in $(ls *
+\f3\fs20 \cf5 \cb0 \CocoaLigature0 .fastq.gz
+\f0\fs16 \cf2 \cb6 \CocoaLigature1  | sort -t'_' -k\cf7 4\cf2 ); do echo $i;a=$((a + 1)); bsub -q dee-hugemem -L /bin/bash -J Trimmomatic$a -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -R "rusage[mem=32000]" -M 32000000 -N "
+\f3\fs20 \cf5 \cb0 \CocoaLigature0 java -jar 
+\f2\fs22 \cf0 \cb6 /home/imateus/Software/Trimmomatic-0.36/
+\f3\fs20 \cf5 \cb0 trimmomatic-0.36.jar SE -phred33  /scratch/beegfs/monthly/imateus/microRNA/raw_fq/$i /scratch/beegfs/monthly/imateus/microRNA/
+\f0\fs16 \cf2 \cb6 \CocoaLigature1 $(
+\f3\fs20 \cf5 \cb0 \CocoaLigature0 echo $i | cut -d'_' -f1,2,3,4,5
+\f0\fs16 \cf2 \cb6 \CocoaLigature1 )_Trim.fastq.gz
+\f3\fs20 \cf5 \cb0 \CocoaLigature0  
+\f4\fs26 \cf0 \cb6 \expnd0\expndtw0\kerning0
+\CocoaLigature1 ILLUMINACLIP:
+\f2\fs22 \kerning1\expnd0\expndtw0 \CocoaLigature0 /home/imateus/Software/Trimmomatic-0.36/adapters/
+\f3\fs20 \cf5 \cb0 NEXTflex_miRNA_3p.fa
+\f4\fs26 \cf0 \cb6 \expnd0\expndtw0\kerning0
+\CocoaLigature1 :2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:18 HEADCROP:4 CROP:96"; 
+\f0\fs16 \cf2 \kerning1\expnd0\expndtw0  cd .. ; done;done\
+\cf2 \cb1 \
+\
+\
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 Change name of file to get notation bla_bla_Rbla_bla.fastq.gz  in TEXTWRANGLER\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf9 On a list of all files
+\f1\b .\
+
+\f0\b0 FIND :^(\\w+)_(\\w+)_(\\w+)_(\\w+)_(\\w+)_(\\w+).(\\w+).gz \
+replace: mv \\1_\\2_\\3_\\4_\\5_\\6.\\7.gz \\1-\\2_\\3_\\4_\\5_\\6.\\7.gz\
+\
+copy in bash.\cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 Sorting of the files in specific folders\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf0 This command creates folder based on the first part of the filenames (
+\f1\b rna01
+\f0\b0 _AZ334EDER_R1_001.fastq.gz). All files are then moved to their dedicated folder.
+\f1\b  
+\f0\b0 \cf2 \
+ARRAY=(); printf "%0.s-" \{1..10\};echo; echo "-> Filenames";for filename in $(find . -maxdepth 1 -type f | sed s,^./,,); do echo $filename; ARRAY+=($( echo $filename | cut -d'_' -f1,\cf10 2\cf2 )); done;  printf "%0.s-" \{1..10\};echo; echo "-> Folders"; sorted_unique_ARRAY=$(echo "$\{ARRAY[@]\}" | tr ' ' '\\n' | sort -u | tr '\\n' ' '); for i in $\{sorted_unique_ARRAY[*]\}; do echo $i; mkdir $i; for files in $(find . -type f -maxdepth 1 -name $i"*" | sed s,^./,,); do echo $files; mv $files $i'/'; done; done\
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs22 \cf0 \ul Unzip fastq files\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0\fs16 \cf2 \ulnone a=0;for folder in $(ls -d 
+\f5\fs24 \cf11 \cb12 \CocoaLigature0 V5_2
+\f0\fs16 \cf2 \cb1 \CocoaLigature1 /); do cd $folder; for i in $(ls *.gz); do echo $i;a=$((a + 1)); bsub -q dee-hugemem -L /bin/bash -J gzip$a -u ivandario.mateusgonzalez@unil.ch -N "gzip -drvc $i > $(echo $i | cut -d'.' -f1,2) ";done; cd ..; done\
+\
+a=0;for folder in $(ls -d 
+\f5\fs24 \cf11 \cb12 \CocoaLigature0 V5_2
+\f0\fs16 \cf2 \cb1 \CocoaLigature1 /); do cd $folder; for i in $(ls *.gz); do echo $i;a=$((a + 1));gzip -drvc $i > $(echo $i | cut -d'.' -f1,2) ;done; cd ..; done\
+\
+\
+\
+\cf0 Remove all *gz files when they are completely uncompressed\cf2 \
+for folder in $(ls -d */); do cd $folder; for i in $(ls *.gz); do echo $i; \cf13 rm $i\cf2 ; done; cd ..; done
+\f1\b \cf0 \
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs22 \cf0 \ul Control of quality format encoding (optionnal since this is now standardized by Illumina)\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0\fs16 \cf2 \ulnone perl /home/fmasclau/MesDocs/KIT_to_analyze_RADseq/DetermineFastqQualityEncoding.pl file.fastq\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf14 sampling..\
+observed range: 35-73\
+format: Sanger or Illumina 1.9+ (offset by 33)\cf2 \
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs22 \cf0 \ul Control of pairing (optionnal; only if problems are detected)\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0\fs24 \cf0 \ulnone \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf2 perl /home/fmasclau/MesDocs/KIT_to_analyze_RADseq/FastqPairedEndValidator_V2.pl *R1* *R2*\
+\cf0 put entire name of each pair of files.\
+Should be performed on a subset of files\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf14 \
+(Not done)\
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs22 \cf0 \ul Analysis of sequences characteristics\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0\fs16 \cf0 \ulnone Performed on a subset of 100000 sequences :\
+\
+head -400000 *R1* | grep -c '^N'\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf14 rad7_0g9xqLmRuFTa_L7_R1_042.fastq:4629\
+rad7_1tqIEey2Cbil_L7_R1_013.fastq:4310\
+rad7_2qIGBNVJm6M8_L7_R1_011.fastq:5752\
+rad7_66L8H7CYDcIH_L7_R1_032.fastq:224\
+rad7_8AbP3gz12gql_L7_R1_048.fastq:3282\
+rad7_8hM5B1jFuvmb_L7_R1_023.fastq:1718\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf0 \
+head -400000 *R1* | grep -c '^NN'\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf14 xx\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf0 \
+head -400000 *R2* | grep -c '^N'\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf14 xx\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf0 \
+head -400000 *R2* | grep -c '^NN' \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf14 xx\
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs22 \cf0 \ul Check that all files are present and paired (synchronized)\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0\fs16 \cf2 \ulnone for folder in $(ls -d 
+\f5\fs24 \cf11 \cb12 \CocoaLigature0 *
+\f0\fs16 \cf2 \cb1 \CocoaLigature1 /); do echo "-> "$folder; cd $folder; a=0;for i in $(ls *_R\cf15 1_\cf2 *.fastq | sort -t'_' -k\cf7 4\cf2 ); do a=$((a + 1)); b=$(echo $i | cut -d'.' -f1 | cut -d'_' -f5); c=$(ls *_R2*$b*.fastq); echo $i" - "$c ;done; printf "%0.s-" \{1..20\}; echo; cd ..; done\
+\
+\cf0 This command checks that all "R1" finds their corresponding "R2". If file names are not paired, something is wrong. The "\cf7 5\cf0 " (in pink) should be changed to another value (field number after cutting by "_"). \cf7 4 \cf0 has to replaced by \cf7 5\cf0  for newer version of RNAseq performed on Illumina machine\cf14 \
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs22 \cf0 \ul Removal of Illumina adapter sequences\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0\fs16 \cf0 \ulnone (file tag = T1)
+\f1\b\fs22 \ul \
+
+\f0\b0\fs16 \ulnone Objective is to remove illumina adapters in case they were sequecend.\
+\
+using LSF\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf14 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d V5_2/); do echo "-> "$folder; cd $folder; a=0;for i in $(ls *_R\cf15 1\cf2 *.fastq | sort -t'_' -k\cf7 4\cf2 ); do echo $i;a=$((a + 1)); bsub -q dee-hugemem -L /bin/bash -J tagcleaner$a -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N "perl /home/fmasclau/MesDocs/KIT_to_analyze_RADseq/tagcleaner.pl -fastq $i -tag5 CCTACACGACGCTCTTCCGATCT -tag3 AGATCGGAAGAGCACACGTCTGA -matrix exact -trim_within 60 -mm5 3 -mm3 4 -log -verbose -out_format 3 -out $(echo $i | cut -d'.' -f1).T1 2> log_T1_$(echo $i | cut -d'.' -f1)";done; printf "%0.s-" \{1..20\}; echo; cd ..; done\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf15 \
+\pard\pardeftab720\sl300\partightenfactor0
+\cf15 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf15 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d V5_2/); do echo "-> "$folder; cd $folder; a=0;for i in $(ls *_R\cf15 2\cf2 *.fastq | sort -t'_' -k\cf7 4\cf2 ); do echo $i;a=$((a + 1)); bsub -q dee-hugemem -L /bin/bash -J tagcleaner$a -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N "perl /home/fmasclau/MesDocs/KIT_to_analyze_RADseq/tagcleaner.pl -fastq $i -tag5 TCAGACGTGTGCTCTTCCGATCT -tag3 AGATCGGAAGAGCGTCGTGTAGG -matrix exact -trim_within 60 -mm5 3 -mm3 4 -log -verbose -out_format 3 -out $(echo $i | cut -d'.' -f1).T1 2> log_T1_$(echo $i | cut -d'.' -f1)";done; printf "%0.s-" \{1..20\}; echo; cd ..; done\
+\
+\cf0 Duration: around 1 hr\
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 sorting into folders
+\f0\b0 \cf2 \
+for folder in $(ls -d V5_2/); do echo "-> "$folder; cd $folder; mkdir T1_after_tagcleaner; mkdir T1_after_tagcleaner/Log-T1; mv *.T1.* T1_after_tagcleaner/; mv log_T1* T1_after_tagcleaner/Log-T1/; mv *log T1_after_tagcleaner/Log-T1/; mkdir T0_initial_files; mv *.fastq T0_initial_files/; cd ..; done\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 Optional: To erase all the T0 folders that contain the initial reads
+\f0\b0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d V5_2/); do echo "-> "$folder; cd $folder; rm -r T0_initial_files; cd ..;done\cf0 \
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs22 \cf0 \ul Check that all files are present and paired (synchronized)\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0\fs16 \cf0 \ulnone \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf7 4 \cf0 has to replaced by \cf7 5\cf0  for newer version of RNAseq
+\f1\b\fs22 \ul \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0\fs16 \cf2 \ulnone for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd T1*/; a=0;for i in $(ls *_R\cf15 1_\cf2 *.fastq | sort -t'_' -k\cf7 4\cf2 ); do a=$((a + 1)); b=$(echo $i | cut -d'.' -f1 | cut -d'_' -f\cf7 5\cf2 ); c=$(ls *_R2*$b*.fastq); echo $i" - "$c ;done; printf "%0.s-" \{1..20\}; echo; cd ../..; done\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf14 checked\
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs22 \cf0 \ul Treatment of original sequence data to keep good quality\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0\fs16 \cf0 \ulnone (file tag = T2)
+\f1\b\fs22 \ul \
+
+\f0\b0\fs16 \ulnone \
+using LSF\
+\cf2 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs20 \cf0 To eliminate bad quality sequences in 3\'92 \cf2 \
+\cf0 + Removal of N at the beginning of pair no. 1 ( -trim_\cf16 n\cf0 s_left 1)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\fs16 \cf14 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf14 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d V5_2*/); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); cd T1*/; a=0;for i in $(ls *_R\cf15 1\cf2 *.T\cf15 1\cf2 .fastq | sort -t'_' -k3); do echo $i; a=$((a + 1)); b=$(echo $i | cut -d'.' -f1 | cut -d'_' -f\cf7 5\cf2 ); bsub -q dee-hugemem -L /bin/bash -J SeqCleaning$a -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N " perl /home/fmasclau/MesDocs/KIT_to_analyze_RADseq/prinseq-lite-0.20.\cf13 4\cf2 .pl -fastq $i -fastq2 *_R2*$b*.T1.* -trim_ns_left 1 -trim_ns_right 1 -trim_qual_type "mean" -trim_qual_window 10 -trim_qual_step 9 -trim_qual_right 15 -min_len 50 -ns_max_n 0 -out_bad 'bad_T2_'$foldername'_'$b'_R' -log 'log_T2_'$foldername'_'$b -out_format 3 -out_good $foldername'_'$b'.T2.R' ";done; cd ../..; printf "%0.s-" \{1..20\}; echo; done\
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf14 All files were correctly processed.\
+Singleton files are generated at this point. They are transferred to a specific folder :\
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 sorting into folders
+\f0\b0 \cf14 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d V5_2/); do echo "-> "$folder; cd $folder; mkdir T2_after_prinseq; cd T1*; mkdir ../T2_after_prinseq/T2_singletons; mv *singlet* ../T2_after_prinseq/T2_singletons/; mkdir ../T2_after_prinseq/Log-T2; mv log_T2* ../T2_after_prinseq/Log-T2/; mkdir ../T2_after_prinseq/Bad_seq_T2; mv bad* ../T2_after_prinseq/Bad_seq_T2; mv *.T2.* ../T2_after_prinseq/; cd ../..; done\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 Optional: To erase all the T1 fastq files that are not necessary
+\f0\b0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd T1*; rm -v *.T1.fastq; cd ../..;done\cf0 \
+\cf2 \
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs22 \cf0 \ul Check that all files are paired (optionnal)\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0\fs16 \cf0 \ulnone Run the command in a T2* folder
+\f1\b\fs22 \ul \
+
+\f0\b0\fs16 \cf2 \ulnone a=0;for i in $(ls *.T2.R_1.fastq | sort -t'_' -k2); do a=$((a + 1)); echo -e "\\n-  "$a"  -";b=$(echo $i | cut -d'.' -f1 | cut -d'_' -f2); c=$(ls *$b.T2.R_2.fastq); echo $i" "$c ;perl /home/fmasclau/MesDocs/KIT_to_analyze_RADseq/FastqPairedEndValidator_V2.pl $i $c ; done\
+\cf0 Should be performed on a subset of files\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs22 \cf0 \ul Check that all files are present and synchronized\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0\fs16 \cf0 \ulnone \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf7 4 \cf0 has to replaced by \cf7 5\cf0  for newer version of RNAseq
+\f1\b\fs22 \ul \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0\fs16 \cf2 \ulnone for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd T2*/; a=0;for i in $(ls *.R_\cf15 1.\cf2 fastq | sort -t'_' -k\cf7 1\cf2 ); do a=$((a + 1)); b=$(echo $i | cut -d'.' -f1 | cut -d'_' -f\cf7 2\cf2 ); c=$(ls *$b*R_2.fastq); echo $i" - "$c ;done; printf "%0.s-" \{1..20\}; echo; cd ../..; done\cf0 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf14 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs22 \cf0 \ul Concatenate .fastq files to get single paired-end files        
+\fs20 \cf15 A REVOIR POUR FONCTIONNEMENT XARGS
+\fs22 \cf0 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0\fs16 \cf2 \ulnone a=0; for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd T2*; rm *.T3.*; name=$(find . -maxdepth 1 -type f | head -1 | sed s,^./,, | cut -d'.' -f1 | cut -d'_' -f1); echo $name; a=$((a + 1)); bsub -q dee-hugemem -L /bin/bash -J Concat$a -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N " files=$(ls -1|grep T2.R_1|sort); echo $files; ls -1|grep T2.R_1|sort|xargs -\cf7 i\cf2  cat \{\} >> $name'_001.T3.R_1.fastq'; files=$(ls -1|grep T2.R_1|sort); echo $files; ls -1|grep T2.R_2|sort|xargs -\cf7 i\cf2  cat \{\} >> $name'_001.T3.R_2.fastq' "; cd ../..; echo; done\
+\
+\cf0 same command on MacOSX (xargs comand is weird)\cf2 \
+a=0; for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd T2*; rm *.T3.*; name=$(find . -maxdepth 1 -type f | head -1 | sed s,^./,, | cut -d'.' -f1 | cut -d'_' -f1); echo $name; a=$((a + 1)); bsub -q dee-hugemem -L /bin/bash -J Concat$a -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N " files=$(ls -1|grep T2.R_1|sort); echo $files; ls -1|grep T2.R_1|sort|xargs -\cf7 I\cf2  \{\} cat \{\} >> $name'_001.T3.R_1.fastq'; files=$(ls -1|grep T2.R_1|sort); echo $files; ls -1|grep T2.R_2|sort|xargs -\cf7 I\cf2  \{\} cat \{\} >> $name'_001.T3.R_2.fastq' "; cd ../..; echo; done\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 sorting into folders
+\f0\b0 \cf14 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; mkdir T3_Assembled_fastq_files; mv T2*/*.T3.* T3*/; cd ..; done\
+\cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 Optionnal: to erase *\cf17 T3\cf0 * files \ul in case of error\ulnone  during the processing
+\f0\b0 \cf14 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd T2*; rm -v *.T3*.gz; cd ../..;done\cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf14 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 Test for the presence of all T3 files\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd T3*; a=0;for i in $(ls *T3.R_\cf15 1.\cf2 fastq | sort -t'_' -k\cf7 1\cf2 ); do a=$((a + 1)); b=$(echo $i | cut -d'.' -f1); c=$(ls $b*T3.R_2.fastq); echo $i" - "$c ;done; printf "%0.s-" \{1..20\}; echo; cd ../..; done\
+\
+\cf0 To check the size of the files\cf2 \
+for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd T3*; ls -l; printf "%0.s-" \{1..20\}; echo; cd ../..; done\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 Optionnal: to erase *T2* files because they are not needed
+\f0\b0 \cf14 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd T2*; rm -v *.T2.*fastq; cd ../..;done\
+\
+\cf0 To erase Bad_seq_T2 and T2_singletons folders\
+\cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd T2*; rm -rv Bad_seq_T2 T2_singletons; cd ../..;done\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 To compress all the T3 fastq files
+\f0\b0 \cf2 \
+a=0;for folder in $(ls -d V5_2/); do echo "-> "$folder; cd $folder; cd T3*; bsub -q dee -L /bin/bash -J $folder'R1' -u ivandario.mateusgonzalez@unil.ch -N "gzip *R_1.fastq"; bsub -q dee -L /bin/bash -J $folder'R2' -u ivandario.mateusgonzalez@unil.ch -N "gzip *R_2.fastq"; cd ../..; done\
+\
+a=0;for folder in $(ls -d m2V*/); do echo "-> "$folder; cd $folder; cd T3*; gzip *R_1.fastq"; bsub -q dee-hugemem -L /bin/bash -J $folder'R2' -u ivandario.mateusgonzalez@unil.ch -N "gzip *R_2.fastq; cd ../..; done\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf0 \
+ \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs22 \cf0 \ul Check that all files are paired (optionnal)\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0\fs16 \cf0 \ulnone Run the command in a T3* folder, on uncompressed files
+\f1\b\fs22 \ul \
+
+\f0\b0\fs16 \cf2 \ulnone a=0;for i in $(ls *.T3.R_1.fastq | sort -t'_' -k2); do a=$((a + 1)); echo -e "\\n-  "$a"  -";b=$(echo $i | cut -d'.' -f1 | cut -d'_' -f2); c=$(ls *$b.T3.R_2.fastq); echo $i" "$c ;perl /home/fmasclau/MesDocs/KIT_to_analyze_RADseq/FastqPairedEndValidator_V3.pl $i $c ; done\cf0 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs36 \cf0  Read mapping on genome\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf0 \'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs28 \cf0 STAR  -  2-pass mapping with re-generated genome.\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf0 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs28 \cf0 MAP CASSAVA GENOME
+\fs16 \
+Index the genome with STAR for 1st-pass mapping\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 mkdir Genome_file_indexed_with_STAR_1st-pass #\cf0 (do not create this folder in the folder "RNAseq")\cf2 \
+cd Genome_file_indexed_with_STAR_1st-pass\
+\pard\pardeftab720\sl280\partightenfactor0
+
+\fs24 \cf18 \expnd0\expndtw0\kerning0
+module add UHTS/Aligner/STAR/2.5.0b;
+\fs16 \cf2 \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \
+MyGenomeDir1=$(pwd)\
+echo $MyGenomeDir1\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\fs20 \cf5 \cb0 \CocoaLigature0  cp ../mesculenta_305_v6.1.gene_exons.gff3 .\
+cp ../Mesculenta_305_v6.fa .\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f1\b\fs16 \cf0 \cb1 \CocoaLigature1 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J StarIndex1 -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -R "rusage[mem=16000]" -M 16000000 -N -n 8 -R "span[ptile=8]" "
+\fs20 \cf5 \cb0 \CocoaLigature0 /home/imateus/Software/STAR-STAR_2.4.0i/bin/Linux_x86_64_static/
+\fs22 \cf0 \cb1 STAR
+\fs16 \cf2 \CocoaLigature1  --runMode genomeGenerate --genomeDir $MyGenomeDir1 --genomeFastaFiles $MyGenomeDir1/
+\fs20 \cf5 \cb0 \CocoaLigature0 Mesculenta_305_v6.fa
+\fs16 \cf2 \cb1 \CocoaLigature1  --runThreadN 8 --sjdbGTFfile $MyGenomeDir1/
+\fs20 \cf5 \cb0 \CocoaLigature0 mesculenta_305_v6.1.gene_exons.gff3
+\fs16 \cf2 \cb1 \CocoaLigature1  --sjdbGTFfeatureExon CDS --sjdbGTFtagExonParentTranscript Parent --sjdbGTFtagExonParentGene ID --sjdbOverhang 99"
+\f1\b \cf0 \
+\
+\pard\tx9860\pardeftab720\partightenfactor0
+\cf0 \
+1st-pass mapping ( to generate SJ.out.tab file for each sample) \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 cd Genome_file_indexed_with_STAR_1st-pass
+\f1\b \cf0 \
+
+\f0\b0 \cf2 MyGenomeDir1=$(pwd)\
+echo $MyGenomeDir1\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 for folder in $(ls -d V*/); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T4_Mapping_pass1"; mkdir $runDir; cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J 'Star-'$foldername -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -n 8 -R "span[ptile=8]" -R "rusage[mem=32000]" -M 32000000 "
+\fs24 \cf18 \expnd0\expndtw0\kerning0
+module add UHTS/Aligner/STAR/2.5.0b;
+\fs16 \cf2 \kerning1\expnd0\expndtw0  
+\fs20 \cf5 \cb0 \CocoaLigature0 ;
+\fs22 \cf0 \cb1 STAR
+\fs16 \cf2 \CocoaLigature1  
+\f1\b \cf0  --runThreadN 8 --genomeDir 
+\f0\b0 \cf2 $MyGenomeDir1
+\f1\b \cf0  --readFilesIn ../T3*/*T3.R_1.fastq* ../T3*/*T3.R_2.fastq* 
+\f0\b0 \cf19 --readFilesCommand zcat\cf0  
+\f1\b  --alignIntronMin 20 --alignIntronMax 5000 
+\f0\b0 \cf2 --outFilterMismatchNoverLmax \cf19 0.4\cf2  --outFilterMismatchNmax \cf19 15 \cf2 --sjdbOverhang 99 
+\f1\b \cf0 --outFilterIntronMotifs RemoveNoncanonical --alignEndsType EndToEnd --outSAMtype BAM SortedByCoordinate --limitGenomeGenerateRAM 14500000000 --limitBAMsortRAM 11500000000; mv SJ.out.tab $
+\f0\b0 \cf2 foldername.
+\f1\b \cf0 SJ.out.tab; rm *.bam"; cd ../..; done\
+\
+\
+
+\f0\b0 \cf2 for folder in $(ls -d V5_2/); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T4_Mapping_pass1"; mkdir $runDir; cd $runDir
+\f1\b \cf0 ; 
+\f0\b0\fs24 \cf18 \expnd0\expndtw0\kerning0
+module add UHTS/Aligner/STAR/2.5.0b;
+\fs22 \cf0 \kerning1\expnd0\expndtw0 \CocoaLigature0 STAR
+\fs16 \cf2 \CocoaLigature1  
+\f1\b \cf0  --runThreadN 8 --genomeDir 
+\f0\b0 \cf2 $MyGenomeDir1
+\f1\b \cf0  --readFilesIn ../T3*/*T3.R_1.fastq* ../T3*/*T3.R_2.fastq* 
+\f0\b0 \cf19 --readFilesCommand zcat\cf0  
+\f1\b  --alignIntronMin 20 --alignIntronMax 5000 
+\f0\b0 \cf2 --outFilterMismatchNoverLmax \cf19 0.4\cf2  --outFilterMismatchNmax \cf19 15 \cf2 --sjdbOverhang 99 
+\f1\b \cf0 --outFilterIntronMotifs RemoveNoncanonical --alignEndsType EndToEnd --outSAMtype BAM SortedByCoordinate --limitGenomeGenerateRAM 14500000000 --limitBAMsortRAM 11500000000; mv SJ.out.tab $
+\f0\b0 \cf2 foldername.
+\f1\b \cf0 SJ.out.tab; rm *.bam; cd ../..; done\
+\
+\
+Create the SJ.out.tab by filtering and merging SJ.out.tab files from all runs\
+
+\f0\b0 \cf2 mkdir Genome_file_indexed_with_STAR_2nd-pass_2samples #\cf0 (do not create this folder in the folder "RNAseq")\
+\cf2 cd Genome_file_indexed_with_STAR_2nd-pass_2samples\
+MyGenomeDir2=$(pwd)\
+\
+> $MyGenomeDir2/Global.SJ.out.tab.Pass1.sjdb; for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd T4_Mapping_pass1; awk 'BEGIN \{OFS="\\t"; strChar[0]="."; strChar[1]="+"; strChar[2]="-";\} \{if($5>0)\{print $1,$2,$3,strChar[$4]\}\}'  *SJ.out.tab >> $MyGenomeDir2/Global.SJ.out.tab.Pass1.sjdb; cd ../..; done\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf15 Additionnal filtering step ?\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf20 This method is based on\
+https://code.google.com/p/rna-star/issues/attachmentText?id=7&aid=70001000&name=STAR_2pass.sh&token=ABZ6GAcdNyvdVUCOoX1BlSK1eNPMqS-UBg%3A1429275140441\cf15 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \
+Index the genome with STAR for 2nd-pass mapping\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f0\b0\fs20 \cf5 \cb0 \CocoaLigature0  cp ../mesculenta_305_v6.1.gene_exons.gff3 .\
+cp ../Mesculenta_305_v6.fa .
+\fs16 \cf2 \cb1 \CocoaLigature1 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \
+\pard\pardeftab720\sl280\partightenfactor0
+
+\fs24 \cf18 \expnd0\expndtw0\kerning0
+module add UHTS/Aligner/STAR/2.5.0b;
+\fs16 \cf2 \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 bsub -q dee-hugemem -L /bin/bash -J StarIndex1 -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -R "rusage[mem=24000]" -M 24000000 -N -n 8 -R "span[ptile=8]" "
+\fs20 \cf5 \cb0 \CocoaLigature0 /home/imateus/Software/STAR-STAR_2.4.0i/bin/Linux_x86_64_static/
+\fs22 \cf0 \cb1 STAR
+\fs16 \cf2 \CocoaLigature1  --runMode genomeGenerate --genomeDir $MyGenomeDir2 --genomeFastaFiles $MyGenomeDir2/
+\fs20 \cf5 \cb0 \CocoaLigature0 Mesculenta_305_v6.fa
+\fs16 \cf2 \cb1 \CocoaLigature1  --runThreadN 8 --sjdbGTFfile $MyGenomeDir2/
+\fs20 \cf5 \cb0 \CocoaLigature0 mesculenta_305_v6.1.gene_exons.gff3
+\fs16 \cf2 \cb1 \CocoaLigature1  --sjdbGTFfeatureExon CDS --sjdbGTFtagExonParentTranscript Parent --sjdbGTFtagExonParentGene ID --sjdbOverhang 99 --sjdbFileChrStartEnd $MyGenomeDir2/Global.SJ.out.tab.Pass1.sjdb"\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs24 \cf0 \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf18 \expnd0\expndtw0\kerning0
+module add UHTS/Aligner/STAR/2.5.0b;
+\fs22 \cf0 \kerning1\expnd0\expndtw0 \CocoaLigature0 STAR
+\fs16 \cf2 \CocoaLigature1  --runMode genomeGenerate --genomeDir $MyGenomeDir2 --genomeFastaFiles $MyGenomeDir2/
+\fs20 \cf5 \cb0 \CocoaLigature0 Mesculenta_305_v6.fa
+\fs16 \cf2 \cb1 \CocoaLigature1  --runThreadN 8 --sjdbGTFfile $MyGenomeDir2/
+\fs20 \cf5 \cb0 \CocoaLigature0 mesculenta_305_v6.1.gene_exons.gff3
+\fs16 \cf2 \cb1 \CocoaLigature1  --sjdbGTFfeatureExon CDS --sjdbGTFtagExonParentTranscript Parent --sjdbGTFtagExonParentGene ID --sjdbOverhang 99 --sjdbFileChrStartEnd $MyGenomeDir2/Global.SJ.out.tab.Pass1.sjdb\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \
+\
+\
+2nd-pass mapping
+\f0\b0\fs24 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf2 cd Genome_file_indexed_with_STAR_ 2nd-pass
+\fs24 \cf0 \
+
+\fs16 \cf2 MyGenomeDir2=$(pwd)
+\fs24 \cf0 \
+
+\fs16 \cf2 echo $MyGenomeDir2
+\fs24 \cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs16 \cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T5_Mapping_pass2_"$folder; mkdir $runDir; cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J 'Star-'$foldername -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -n 8 -R "span[ptile=8]" -R "rusage[mem=24000]" -M 24000000 "
+\fs24 \cf18 \expnd0\expndtw0\kerning0
+module add UHTS/Aligner/STAR/2.5.0b;
+\fs22 \cf0 \kerning1\expnd0\expndtw0 \CocoaLigature0 STAR
+\f1\b\fs16 \CocoaLigature1  
+\f0\b0 \cf2 --runThreadN 8 --genomeDir $MyGenomeDir2 --readFilesIn ../T3*/*T3.R_1.fastq* ../T3*/*T3.R_2.fastq* \cf19 --readFilesCommand zcat\cf0  \cf2 --alignIntronMin 20 --alignIntronMax 5000 --outFilterMismatchNoverLmax \cf19 0.4\cf2  --outFilterMismatchNmax \cf19 15\cf2  --sjdbOverhang 99 --outFilterIntronMotifs RemoveNoncanonical --alignEndsType EndToEnd --outSAMtype BAM SortedByCoordinate --limitGenomeGenerateRAM 14500000000 --limitBAMsortRAM 11500000000 
+\f4\fs24 \cf0 \expnd0\expndtw0\kerning0
+--outReadsUnmapped Fastx
+\f0\fs16 \cf2 \kerning1\expnd0\expndtw0 ;  mv Aligned.sortedByCoord.out.bam RNAseq-aligned_$foldername.bam; 
+\f2\fs22 \cf0 \CocoaLigature0 mv Unmapped.out.mate1 $foldername.1.fq; mv Unmapped.out.mate2 $foldername.2.fq
+\f0\fs16 \cf2 \CocoaLigature1 "
+\f2\fs22 \cf0 \CocoaLigature0 ;
+\f0\fs16 \cf2 \CocoaLigature1 cd ../..; done
+\f1\b \cf0 \
+\
+\
+
+\f0\b0 \cf2 for folder in $(ls -d V4*/); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T5_Mapping_pass2_"$folder; mkdir $runDir; cd $runDir
+\f1\b \cf0 ;
+\f0\b0\fs24 \cf18 \expnd0\expndtw0\kerning0
+module add UHTS/Aligner/STAR/2.5.0b;
+\fs22 \cf0 \kerning1\expnd0\expndtw0 \CocoaLigature0 STAR
+\f1\b\fs16 \CocoaLigature1  
+\f0\b0 \cf2 --runThreadN 8 --genomeDir $MyGenomeDir2 --readFilesIn ../T3*/*T3.R_1.fastq* ../T3*/*T3.R_2.fastq* \cf19 --readFilesCommand zcat\cf0  \cf2 --alignIntronMin 20 --alignIntronMax 5000 --outFilterMismatchNoverLmax \cf19 0.4\cf2  --outFilterMismatchNmax \cf19 15\cf2  --sjdbOverhang 99 --outFilterIntronMotifs RemoveNoncanonical --alignEndsType EndToEnd --outSAMtype BAM SortedByCoordinate --limitGenomeGenerateRAM 14500000000 --limitBAMsortRAM 11500000000 
+\f4\fs24 \cf0 \expnd0\expndtw0\kerning0
+--outReadsUnmapped Fastx
+\f0\fs16 \cf2 \kerning1\expnd0\expndtw0 ;  mv Aligned.sortedByCoord.out.bam RNAseq-aligned_$foldername.bam; 
+\f2\fs22 \cf0 \CocoaLigature0 mv Unmapped.out.mate1 $foldername.1.fq; mv Unmapped.out.mate2 $foldername.2.fq;
+\f0\fs16 \cf2 \CocoaLigature1 cd ../..; done
+\f1\b \cf0 \
+\
+\
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f2\b0\fs26 \cf21 \cb5 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab708\ri464\partightenfactor0
+
+\f0\fs16 \cf2 \cb1 \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\
+\pard\pardeftab708\ri464\partightenfactor0
+\cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs28 \cf0 SECOND APPROACH
+\fs16 \
+
+\fs28 EXTRACT UNMAPPED READS FROM MESCULENTA ALIGNMENT\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf0 \
+\pard\tx9860\pardeftab720\partightenfactor0
+\cf0 \
+\pard\pardeftab708\ri464\partightenfactor0
+\cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs28 \cf0 compress unmapped reads \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0\fs16 \cf2 a=0;for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd 
+\f2\fs22 \cf0 \CocoaLigature0 T5_Mapping_pass2
+\f0\fs16 \cf2 \CocoaLigature1 *; bsub -q dee -L /bin/bash -J $folder'R1' -u ivandario.mateusgonzalez@unil.ch -N "gzip *1.fq"; bsub -q dee -L /bin/bash -J $folder'R2' -u ivandario.mateusgonzalez@unil.ch -N "gzip *2.fq"; cd ../..; done\
+\cf0 \
+\cf2 mkdir Genome_Umap_AMF_1st-pass #\cf0 (do not create this folder in the folder "RNAseq")\cf2 \
+cd Genome_Umap_AMF_1st-pass\
+MyGenomeDir1=$(pwd)\
+echo $MyGenomeDir1\
+cp /home/fmasclau/MesDocs/Sequences/Genomes/\cf7 Glomus_Nu6_genome.fa\cf2  .\
+cp 
+\f3\fs20 \cf5 \cb0 \CocoaLigature0 /scratch/cluster/monthly/imateus/GENOMES/Predicted_prot_hint_Glomus_Nu6_genome_masked.gff
+\f0\fs16 \cf2 \cb1 \CocoaLigature1  .
+\fs20 \cf5 \cb0 \CocoaLigature0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f1\b\fs16 \cf0 \cb1 \CocoaLigature1 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J StarIndex1 -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -R "rusage[mem=16000]" -M 16000000 -N -n 8 -R "span[ptile=8]" "
+\fs24 \cf18 \expnd0\expndtw0\kerning0
+module add UHTS/Aligner/STAR/2.5.0b;
+\fs22 \cf0 \kerning1\expnd0\expndtw0 \CocoaLigature0 STAR
+\fs16 \cf2 \CocoaLigature1  --runMode genomeGenerate --genomeDir $MyGenomeDir1 --genomeFastaFiles $MyGenomeDir1/\cf7 Glomus_Nu6_genome.fa\cf2  --runThreadN 8 --sjdbGTFfile $MyGenomeDir1/
+\f3\fs20 \cf5 \cb0 \CocoaLigature0 Predicted_prot_hint_Glomus_Nu6_genome_masked.gff
+\f0\fs16 \cf2 \cb1 \CocoaLigature1  --sjdbGTFfeatureExon CDS --sjdbGTFtagExonParentTranscript Parent --sjdbGTFtagExonParentGene ID --sjdbOverhang 99"
+\f1\b \cf0 \
+\
+
+\f0\b0 \cf2 \
+\
+\pard\tx9860\pardeftab720\partightenfactor0
+
+\f1\b \cf0 1st-pass mapping ( to generate SJ.out.tab file for each sample) \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 cd Genome_Umap_AMF_1st-pass
+\f1\b \cf0 \
+
+\f0\b0 \cf2 MyGenomeDir1=$(pwd)\
+echo $MyGenomeDir1\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 for folder in $(ls -d V6*/); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T4_umap_AMF_pass1"; mkdir $runDir; cd $runDir
+\f1\b \cf0 ;
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J align$folder -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -R "rusage[mem=16000]" -M 16000000 -N -n 8 -R "span[ptile=8]" "
+\fs24 \cf18 \expnd0\expndtw0\kerning0
+module add UHTS/Aligner/STAR/2.5.0b;
+\fs22 \cf0 \kerning1\expnd0\expndtw0 \CocoaLigature0 STAR
+\fs16 \cf2 \CocoaLigature1  
+\f1\b \cf0  --runThreadN 4 --genomeDir 
+\f0\b0 \cf2 $MyGenomeDir1
+\f1\b \cf0  --readFilesIn ../T5_Map*/*.1.fq.gz ../T5_Map*/*.2.fq.gz 
+\f0\b0 \cf19 --readFilesCommand zcat\cf0  
+\f1\b  --alignIntronMin 20 --alignIntronMax 5000 
+\f0\b0 \cf2 --outFilterMismatchNoverLmax \cf19 0.4\cf2  --outFilterMismatchNmax \cf19 15 \cf2 --sjdbOverhang 99 
+\f1\b \cf0 --outFilterIntronMotifs RemoveNoncanonical --alignEndsType EndToEnd --outSAMtype BAM SortedByCoordinate --limitGenomeGenerateRAM 14500000000 --limitBAMsortRAM 11500000000; mv SJ.out.tab $
+\f0\b0 \cf2 foldername.
+\f1\b \cf0 SJ.out.tab; rm *.bam"; cd ../..; done\
+\
+\
+Create the SJ.out.tab by filtering and merging SJ.out.tab files from all runs\
+
+\f0\b0 \cf2 mkdir Genome_Umap_AMF_2nd-pass #\cf0 (do not create this folder in the folder "RNAseq")\
+\cf2 cd Genome_Umap_AMF_2nd-pass\
+MyGenomeDir2=$(pwd)\
+\
+> $MyGenomeDir2/Global.SJ.out.tab.Pass1.sjdb; for folder in $(ls -d [m-V]*/); do echo "-> "$folder; cd $folder; cd T4_umap_AMF_pass1; awk 'BEGIN \{OFS="\\t"; strChar[0]="."; strChar[1]="+"; strChar[2]="-";\} \{if($5>0)\{print $1,$2,$3,strChar[$4]\}\}'  *SJ.out.tab >> $MyGenomeDir2/Global.SJ.out.tab.Pass1.sjdb; cd ../..; done\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf15 Additionnal filtering step ?\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf20 This method is based on\
+https://code.google.com/p/rna-star/issues/attachmentText?id=7&aid=70001000&name=STAR_2pass.sh&token=ABZ6GAcdNyvdVUCOoX1BlSK1eNPMqS-UBg%3A1429275140441\cf15 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \
+Index the genome with STAR for 2nd-pass mapping\
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 cp /home/fmasclau/MesDocs/Sequences/Genomes/\cf7 Glomus_Nu6_genome.fa\cf2  .\
+cp 
+\f3\fs20 \cf5 \cb0 \CocoaLigature0 /scratch/cluster/monthly/imateus/GENOMES/Predicted_prot_hint_Glomus_Nu6_genome_masked.gff
+\f0\fs16 \cf2 \cb1 \CocoaLigature1  .
+\fs20 \cf5 \cb0 \CocoaLigature0 \
+
+\fs16 \cf2 \cb1 \CocoaLigature1 \
+bsub -q dee-hugemem -L /bin/bash -J StarIndex1 -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -R "rusage[mem=16000]" -M 16000000 -N -n 8 -R "span[ptile=8]" "
+\fs24 \cf18 \expnd0\expndtw0\kerning0
+module add UHTS/Aligner/STAR/2.5.0b;
+\fs22 \cf0 \kerning1\expnd0\expndtw0 \CocoaLigature0 STAR
+\fs16 \cf2 \CocoaLigature1  --runMode genomeGenerate --genomeDir $MyGenomeDir2 --genomeFastaFiles $MyGenomeDir2/\cf7 Glomus_Nu6_genome.fa\cf2  --runThreadN 8 --sjdbGTFfile $MyGenomeDir2/
+\f3\fs20 \cf5 \cb0 \CocoaLigature0 Predicted_prot_hint_Glomus_Nu6_genome_masked.gff
+\f0\fs16 \cf2 \cb1 \CocoaLigature1  --sjdbGTFfeatureExon CDS --sjdbGTFtagExonParentTranscript Parent --sjdbGTFtagExonParentGene ID --sjdbOverhang 99 --sjdbFileChrStartEnd $MyGenomeDir2/Global.SJ.out.tab.Pass1.sjdb"\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs24 \cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs16 \cf0 \
+\
+2nd-pass mapping
+\f0\b0\fs24 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf2 cd Genome_Umap
+\fs24 \cf0 \
+
+\fs16 \cf2 MyGenomeDir2=$(pwd)
+\fs24 \cf0 \
+
+\fs16 \cf2 echo $MyGenomeDir2
+\fs24 \cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs16 \cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 for folder in $(ls -d V4*/); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T5_Umap_AMF_pass2_"$folder; mkdir $runDir; cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J 'Star-'$foldername -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -n 4 -R "span[ptile=4]" -R "rusage[mem=16000]" -M 16000000 "
+\fs24 \cf18 \expnd0\expndtw0\kerning0
+module add UHTS/Aligner/STAR/2.5.0b;
+\fs22 \cf0 \kerning1\expnd0\expndtw0 \CocoaLigature0 STAR
+\fs16 \cf2 \CocoaLigature1  
+\f1\b \cf0  
+\f0\b0 \cf2 --runThreadN 4 --genomeDir $MyGenomeDir2 --readFilesIn 
+\f1\b \cf0 ../T5_Map*/*.1.fq.gz ../T5_Map*/*.2.fq.gz
+\f0\b0 \cf2  \cf19 --readFilesCommand zcat\cf0  \cf2 --alignIntronMin 20 --alignIntronMax 5000 --outFilterMismatchNoverLmax \cf19 0.4\cf2  --outFilterMismatchNmax \cf19 15\cf2  --sjdbOverhang 99 --outFilterIntronMotifs RemoveNoncanonical --alignEndsType EndToEnd --outSAMtype BAM SortedByCoordinate --limitGenomeGenerateRAM 14500000000 --limitBAMsortRAM 11500000000 ;  mv Aligned.sortedByCoord.out.bam RNAseq-umap-N6_$foldername.bam"; cd ../..; done
+\f1\b \cf0 \
+\
+\
+
+\f0\b0 \cf2 for folder in $(ls -d m*/); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T5_Umap_AMF_pass2_"$folder; mkdir $runDir; cd $runDir
+\f1\b \cf0 ;
+\f0\b0\fs24 \cf18 \expnd0\expndtw0\kerning0
+module add UHTS/Aligner/STAR/2.5.0b;
+\fs22 \cf0 \kerning1\expnd0\expndtw0 \CocoaLigature0 STAR
+\fs16 \cf2 \CocoaLigature1  
+\f1\b \cf0  
+\f0\b0 \cf2 --runThreadN 8 --genomeDir $MyGenomeDir2 --readFilesIn 
+\f1\b \cf0 ../T5_Map*/*.1.fq.gz ../T5_Map*/*.2.fq.gz
+\f0\b0 \cf2  \cf19 --readFilesCommand zcat\cf0  \cf2 --alignIntronMin 20 --alignIntronMax 5000 --outFilterMismatchNoverLmax \cf19 0.4\cf2  --outFilterMismatchNmax \cf19 15\cf2  --sjdbOverhang 99 --outFilterIntronMotifs RemoveNoncanonical --alignEndsType EndToEnd --outSAMtype BAM SortedByCoordinate --limitGenomeGenerateRAM 14500000000 --limitBAMsortRAM 11500000000 ;  mv Aligned.sortedByCoord.out.bam RNAseq-umap-N6_$foldername.bam; cd ../..; done
+\f1\b \cf0 \
+\
+\
+\pard\tx9860\pardeftab720\partightenfactor0
+\cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f2\b0\fs26 \cf21 \cb5 \expnd0\expndtw0\kerning0
+COnvert bam to fastq AMF\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\fs16 \cf2 \cb1 \kerning1\expnd0\expndtw0 a=0;for folder in $(ls -d m2*/); do echo "-> "$folder; cd $folder; cd 
+\f2\fs22 \cf22 \cb6 \CocoaLigature0 T5_Umap_AMF_pass2
+\f0\fs16 \cf2 \cb1 \CocoaLigature1 *; for i in $(ls *.bam); do echo $i;
+\f2\fs26 \cf21 \cb5 \expnd0\expndtw0\kerning0
+bsub -q dee-hugemem -L /bin/bash -J R$foldername -u ivandario.mateusgonzalez@unil.ch -N  "module add UHTS/Analysis/samtools/1.1;
+\f4\fs24 \cf0 \cb1 samtools bam2fq $i  > 
+\f2\fs26 \cf21 \cb5  
+\f0\fs16 \cf2 \cb1 \kerning1\expnd0\expndtw0 $(echo $i | cut -d'.' -f1)_n6.fastq
+\f2\fs26 \cf21 \cb5 \expnd0\expndtw0\kerning0
+"
+\f0\fs16 \cf2 \cb1 \kerning1\expnd0\expndtw0 ; cd ../..; done;done\
+\pard\tx9860\pardeftab720\partightenfactor0
+
+\f1\b \cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 a=0;for folder in $(ls -d m2*/); do echo "-> "$folder; cd $folder; cd 
+\f2\fs22 \cf22 \cb6 \CocoaLigature0 T5_Umap_AMF_pass2
+\f0\fs16 \cf2 \cb1 \CocoaLigature1 *; for i in $(ls *.bam); do echo $i;
+\f2\fs26 \cf21 \cb5 \expnd0\expndtw0\kerning0
+module add UHTS/Analysis/samtools/1.1;
+\f0\fs24 \cf18 \cb1 samtools view -uf64 
+\f4 \cf0 $i 
+\f0 \cf18  |samtools bam2fq - |gzip > 
+\fs16 \cf2 \kerning1\expnd0\expndtw0 $(echo $i | cut -d'.' -f1)_1.fq.gz; 
+\fs24 \cf18 \expnd0\expndtw0\kerning0
+samtools view -uf128 
+\f4 \cf0 $i 
+\f0 \cf18  |samtools bam2fq - |gzip > 
+\fs16 \cf2 \kerning1\expnd0\expndtw0 $(echo $i | cut -d'.' -f1)_2.fq.gz\cf2 ; cd ../..; done;done\
+\pard\tx9860\pardeftab720\partightenfactor0
+
+\f1\b \cf0 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f2\b0\fs26 \cf21 \cb5 \expnd0\expndtw0\kerning0
+COnvert bam to fastq CASSAVA\
+\pard\tx9860\pardeftab720\partightenfactor0
+
+\f1\b\fs16 \cf0 \cb1 \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 a=0;for folder in $(ls -d V6_*/); do echo "-> "$folder; cd $folder; cd 
+\f3\fs20 \cf11 \cb23 \CocoaLigature0 T5_Mapping_pass2_
+\f0\fs16 \cf2 \cb1 \CocoaLigature1 *; for i in $(ls *.bam); do echo $i;
+\f2\fs26 \cf21 \cb5 \expnd0\expndtw0\kerning0
+module add UHTS/Analysis/samtools/1.1;
+\f0\fs24 \cf18 \cb1 samtools view -uf64 
+\f4 \cf0 $i 
+\f0 \cf18  |samtools bam2fq - |gzip > 
+\fs16 \cf2 \kerning1\expnd0\expndtw0 $(echo $i | cut -d'.' -f1)_Mesc_1.fq.gz; 
+\fs24 \cf18 \expnd0\expndtw0\kerning0
+samtools view -uf128 
+\f4 \cf0 $i 
+\f0 \cf18  |samtools bam2fq - |gzip > 
+\fs16 \cf2 \kerning1\expnd0\expndtw0 $(echo $i | cut -d'.' -f1)_Mesc_2.fq.gz; cd ../..; done;done\
+\pard\tx9860\pardeftab720\partightenfactor0
+
+\f1\b \cf0 \
+\
+\
+Put all bam files into an unique folder\
+\pard\pardeftab708\ri464\partightenfactor0
+
+\f0\b0 \cf2 mkdir Bam_files_Mesculenta\
+\pard\pardeftab720\sl364\partightenfactor0
+
+\f6\fs22 \cf0 \cb24 \expnd0\expndtw0\kerning0
+\
+                                            \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs16 \cf0 \cb1 \
+\pard\pardeftab708\ri464\partightenfactor0
+\cf0 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf0 \'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs36 \cf0  CASSAVA SNP calling from RNA-seq. with GATK\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf0 \'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\
+\pard\pardeftab708\ri1576\partightenfactor0
+
+\f0\b0 \cf0 \
+\
+\
+adding headers to bam.file\cf25 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf26 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T6_SNP_YUCA_"$folder; mkdir $runDir; cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J addhed$folder -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=24000]" -M 24000000 "\cf26 \expnd0\expndtw0\kerning0
+module add UHTS/Analysis/picard-tools/1.130;java -jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /software/UHTS/Analysis/picard-tools/1.130/bin/picard.jar\expnd0\expndtw0\kerning0
+\CocoaLigature1  AddOrReplaceReadGroups I=  \kerning1\expnd0\expndtw0 ../T5_Mapping_pass2*/*.bam\expnd0\expndtw0\kerning0
+ O= "Cassava_"\kerning1\expnd0\expndtw0 $foldername"_RG.bam"\expnd0\expndtw0\kerning0
+ SO=coordinate RGID=id RGLB=library RGPL=platform RGPU=machine RGSM=sample"; cd ../..;done  \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T6_SNP_YUCA_"$folder;cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J dedup$folder -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=36000]" -M 36000000 "\cf26 \expnd0\expndtw0\kerning0
+module add UHTS/Analysis/picard-tools/1.130;java -jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /software/UHTS/Analysis/picard-tools/1.130/bin/picard.jar\expnd0\expndtw0\kerning0
+\CocoaLigature1  MarkDuplicates I= *RG.bam O="Cassava_"\kerning1\expnd0\expndtw0 $foldername"_dedup.bam"\expnd0\expndtw0\kerning0
+  CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT M=output.metrics" ; cd ../..; done
+\f1\b \cf0 \kerning1\expnd0\expndtw0 \
+\
+\pard\pardeftab708\ri1576\partightenfactor0
+
+\f0\b0 \cf0 \expnd0\expndtw0\kerning0
+Create dictionary from picard\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf27  module add UHTS/Analysis/picard-tools/1.80;java -jar /software/UHTS/Analysis/picard-tools/1.80/CreateSequenceDictionary.jar R= Mesculenta_305_v6.fa O= Mesculenta_305_v6.dict\cf0 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \kerning1\expnd0\expndtw0 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+Create GENOME INDEX\kerning1\expnd0\expndtw0 \
+\pard\pardeftab708\ri-7215\partightenfactor0
+
+\f3\fs24 \cf28 \cb29 module add UHTS/Analysis/samtools/1.1;
+\f0 \cf0 \cb1 \expnd0\expndtw0\kerning0
+samtools faidx 
+\fs16 \cf27 Mesculenta_305_v6.fa
+\fs24 \cf0 \
+\pard\pardeftab708\ri1576\partightenfactor0
+
+\fs16 \cf0 \kerning1\expnd0\expndtw0 \
+\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+Split'N'Trim and reassign mapping qualities\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T6_SNP_YUCA_"$folder;cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J sptrim$folder -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=24000]" -M 24000000 "\cf30  \CocoaLigature0 module add UHTS/Analysis/GenomeAnalysisTK/3.5;GenomeAnalysisTK\expnd0\expndtw0\kerning0
+\CocoaLigature1  -T SplitNCigarReads -R 
+\f3\fs20 \cf5 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/beegfs/monthly/imateus/Genome_info/Genome_file_indexed_with_STAR_2nd-pass/
+\f0 Mesculenta_305_v6.fa
+\fs16 \cf30 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  -I *dedup.bam -o \cf26 "Cassava_"\kerning1\expnd0\expndtw0 $foldername"\cf30 _split.bam"\expnd0\expndtw0\kerning0
+ -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS\cf2 \kerning1\expnd0\expndtw0 "\cf30 \expnd0\expndtw0\kerning0
+; \cf26 cd ../..; done
+\f1\b \cf0 \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf0 \expnd0\expndtw0\kerning0
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \kerning1\expnd0\expndtw0 \
+\pard\pardeftab708\ri1576\partightenfactor0
+
+\f0\b0 \cf0 \expnd0\expndtw0\kerning0
+Variant calling 2 Freebayes\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf2 \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T6_SNP_YUCA_"$folder;cd $runDir
+\f1\b \cf0 ;
+\f0\b0 \cf2  bsub -q dee-hugemem -L /bin/bash -J freebayes$folder -u \cf31 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=36000]" -M 36000000 " export PATH=/software/bin:$PATH; module add UHTS/Analysis/freebayes/0.\cf15 9.9.2\cf2 ; freebayes -f 
+\f3\fs20 \cf5 \cb0 \CocoaLigature0 /scratch/cluster/monthly/imateus/GENOMES/
+\f0 Mesculenta_305_v6.fa
+\f3  
+\f0\fs16 \cf2 \cb1 \CocoaLigature1  \cf15 -p 10 -J -K -F 0.1 -0\cf2  \cf14 -u\cf2  -v \cf26 \expnd0\expndtw0\kerning0
+Cassava_"\kerning1\expnd0\expndtw0 $foldername"\cf30 _\cf2 freebay.vcf -b *\cf30 _split.bam\cf2 ";\cf26 \expnd0\expndtw0\kerning0
+cd ../..;\cf2 \kerning1\expnd0\expndtw0  done\
+\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+Variant calling 2 Freebayes FILTER\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \kerning1\expnd0\expndtw0 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T6_SNP_YUCA_"$folder;cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J vcffil$folder -u \cf31 ivandario.mateusgonzalez\cf2 @unil.ch -N "\
+\pard\pardeftab720\partightenfactor0
+
+\fs24 \cf28 \cb32 module add UHTS/Analysis/vcflib/2014.10.17;
+\fs16 \cf2 \cb1  vcffilter -f 'DP > \cf15 10\cf2 ' \cf26 \expnd0\expndtw0\kerning0
+Cassava_'\kerning1\expnd0\expndtw0 $foldername'\cf30 _\cf2 freebay\cf30 .vcf\cf2  | vcffilter -f 'QUAL > \cf15 30\cf2 ' > \cf26 \expnd0\expndtw0\kerning0
+Cassava_\kerning1\expnd0\expndtw0 '$foldername'\cf30 _\cf2 FDP10Q30.vcf" ; \cf26 \expnd0\expndtw0\kerning0
+cd ../..;\cf2 \kerning1\expnd0\expndtw0 done\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs36 \cf0  simplified_VCF f.masclaux CASSAVA\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf0 \'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0
+\f0\b0 \cf2 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+\
+CREATE ALL POSITIONS FILE in folder:\
+\pard\tx264\pardeftab708\ri468\partightenfactor0
+
+\f3\fs20 \cf5 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 perl /scratch/cluster/monthly/imateus/GENOMES/simplified_VCF/Record_all_positions_from_VCF.pl\
+
+\f0\fs16 \cf0 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 generate coverage of samples\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf2 \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T6_SNP_YUCA_"$folder;cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J samdepth$folder -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N "\cf30  \cf2 module add UHTS/Analysis/samtools/1.\cf15 2\cf2 ; samtools depth \cf26 \expnd0\expndtw0\kerning0
+Cassava_"\kerning1\expnd0\expndtw0 $foldername"\cf30 _split.bam\cf2  > \cf26 \expnd0\expndtw0\kerning0
+"\kerning1\expnd0\expndtw0 $foldername"\cf2 .coverage\cf30 \expnd0\expndtw0\kerning0
+ \cf26 ";\cf30  \cf26 cd ../..; done\
+\
+\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 Before move all files into same folder.\
+\
+\
+create subVCF\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf26 \
+\pard\tx264\pardeftab708\ri468\partightenfactor0
+\cf2 \kerning1\expnd0\expndtw0 for i in $(ls *.coverage); do echo $i; a=$(echo $i | cut -d'.' -f1); b=$(ls *_$(printf %q "$\{a\}_")*.vcf); echo $b; bsub -q dee-hugemem -L /bin/bash -J RsVCF_$a -u ivandario.mateusgonzalez@unil.ch -N -R "rusage[mem=24000]" -M 24000000 "perl 
+\f3\fs20 \cf5 \cb0 \CocoaLigature0 /scratch/cluster/monthly/imateus/GENOMES/simplified_VCF/Simplified_VCF_maker.pl 
+\f0\fs16 \cf2 \cb1 \CocoaLigature1 All_positions_with_variants
+\f1\b \cf14 \ul \ulc14 *
+\f0\b0 \cf2 \ulnone  $i $b  "; done\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \
+\
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs36 \cf0  AMF SNP calling from RNA-seq. with FREEBAYES & GATK\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf0 \'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 \
+\
+\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 adding headers to bam.file\cf25 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf26 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T7_SNP_UMAP_AMF_"$folder; mkdir $runDir; cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J addhed$folder -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=24000]" -M 24000000 "\cf26 \expnd0\expndtw0\kerning0
+module add UHTS/Analysis/picard-tools/1.130;java -jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /software/UHTS/Analysis/picard-tools/1.130/bin/picard.jar\expnd0\expndtw0\kerning0
+\CocoaLigature1  AddOrReplaceReadGroups I=  \kerning1\expnd0\expndtw0 ../
+\f3\fs20 \cf5 \cb0 \CocoaLigature0 T5_Umap_AMF_pass2_
+\f0\fs16 \cf26 \cb1 \CocoaLigature1 */*.bam\expnd0\expndtw0\kerning0
+ O= "UMAP_AMF_"\kerning1\expnd0\expndtw0 $foldername"_RG.bam"\expnd0\expndtw0\kerning0
+ SO=coordinate RGID=id RGLB=library RGPL=platform RGPU=machine RGSM=sample"; cd ../..;done  \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T7_SNP_UMAP_AMF_"$folder;cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J dedup$folder -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=36000]" -M 36000000 "\cf26 \expnd0\expndtw0\kerning0
+module add UHTS/Analysis/picard-tools/1.130;java -jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /software/UHTS/Analysis/picard-tools/1.130/bin/picard.jar\expnd0\expndtw0\kerning0
+\CocoaLigature1  MarkDuplicates I= *RG.bam O="UMAP_AMF_"\kerning1\expnd0\expndtw0 $foldername"_dedup.bam"\expnd0\expndtw0\kerning0
+  CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT M=output.metrics" ; cd ../..; done
+\f1\b \cf0 \kerning1\expnd0\expndtw0 \
+\
+GO IN:\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f3\b0\fs20 \cf5 \cb0 \CocoaLigature0 /scratch/beegfs/monthly/imateus/Genome_info/Genome_Umap_AMF_2nd-pass/
+\f1\b\fs16 \cf0 \cb1 \CocoaLigature1 \
+\pard\pardeftab708\ri1576\partightenfactor0
+
+\f0\b0 \cf0 \expnd0\expndtw0\kerning0
+Create dictionary from picard\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf27  module add UHTS/Analysis/picard-tools/1.80;java -jar /software/UHTS/Analysis/picard-tools/1.80/CreateSequenceDictionary.jar R= 
+\f3\fs20 \cf33 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 Glomus_Nu6_genome.fa
+\f0\fs16 \cf27 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  O= 
+\f3\fs20 \cf33 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 Glomus_Nu6_genome
+\f0\fs16 \cf27 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 .dict\cf0 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \kerning1\expnd0\expndtw0 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+Create GENOME INDEX\kerning1\expnd0\expndtw0 \
+\pard\pardeftab708\ri-7215\partightenfactor0
+
+\f3\fs24 \cf28 \cb29 module add UHTS/Analysis/samtools/1.1;
+\f0 \cf0 \cb1 \expnd0\expndtw0\kerning0
+samtools faidx 
+\f3\fs20 \cf33 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 Glomus_Nu6_genome.fa
+\f0\fs24 \cf0 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\pard\pardeftab708\ri1576\partightenfactor0
+
+\fs16 \cf0 \kerning1\expnd0\expndtw0 \
+\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+Split'N'Trim and reassign mapping qualities\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T7_SNP_UMAP_AMF_"$folder;cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J sptrim$folder -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=24000]" -M 24000000 "\cf30  \CocoaLigature0 module add UHTS/Analysis/GenomeAnalysisTK/3.5;GenomeAnalysisTK\expnd0\expndtw0\kerning0
+\CocoaLigature1  -T SplitNCigarReads -R 
+\f3\fs20 \cf5 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 /scratch/beegfs/monthly/imateus/Genome_info/Genome_Umap_AMF_2nd-pass/\cf33 Glomus_Nu6_genome.fa
+\f0\fs16 \cf30 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  -I *dedup.bam -o \cf26 "UMAP_AMF_"\kerning1\expnd0\expndtw0 $foldername"\cf30 _split.bam"\expnd0\expndtw0\kerning0
+ -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS\cf2 \kerning1\expnd0\expndtw0 "\cf30 \expnd0\expndtw0\kerning0
+; \cf26 cd ../..; done
+\f1\b \cf0 \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf0 \expnd0\expndtw0\kerning0
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \kerning1\expnd0\expndtw0 \
+\pard\pardeftab708\ri1576\partightenfactor0
+
+\f0\b0 \cf0 \expnd0\expndtw0\kerning0
+Variant calling 2 Freebayes\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf2 \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T7_SNP_UMAP_AMF_"$folder;cd $runDir
+\f1\b \cf0 ;
+\f0\b0 \cf2  bsub -q dee-hugemem -L /bin/bash -J freebayes$folder -u \cf31 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=36000]" -M 36000000 " export PATH=/software/bin:$PATH; module add UHTS/Analysis/freebayes/0.\cf15 9.9.2\cf2 ; freebayes -f 
+\f3\fs20 \cf5 \cb0 \CocoaLigature0 /scratch/beegfs/monthly/imateus/Genome_info/Genome_Umap_AMF_2nd-pass/\cf33 Glomus_Nu6_genome.fa\cf5  
+\f0\fs16 \cf2 \cb1 \CocoaLigature1  \cf15 -p 10 -J -K -F 0.1 -0\cf2  \cf14 -u\cf2  -v \cf26 \expnd0\expndtw0\kerning0
+UMAP_AMF_"\kerning1\expnd0\expndtw0 $foldername"\cf30 _\cf2 freebay.vcf -b *\cf30 _split.bam\cf2 ";\cf26 \expnd0\expndtw0\kerning0
+cd ../..;\cf2 \kerning1\expnd0\expndtw0  done\
+\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+Variant calling 2 Freebayes FILTER\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \kerning1\expnd0\expndtw0 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T7_SNP_UMAP_AMF_"$folder;cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J vcffil$folder -u \cf31 ivandario.mateusgonzalez\cf2 @unil.ch -N "\
+\pard\pardeftab720\partightenfactor0
+
+\fs24 \cf28 \cb32 module add UHTS/Analysis/vcflib/2014.10.17;
+\fs16 \cf2 \cb1  vcffilter -f 'DP > \cf15 10\cf2 ' \cf26 \expnd0\expndtw0\kerning0
+UMAP_AMF_'\kerning1\expnd0\expndtw0 $foldername'\cf30 _\cf2 freebay\cf30 .vcf\cf2  | vcffilter -f 'QUAL > \cf15 30\cf2 ' > \cf26 \expnd0\expndtw0\kerning0
+UMAP_AMF_\kerning1\expnd0\expndtw0 '$foldername'\cf30 _\cf2 FDP10Q30.vcf" ; \cf26 \expnd0\expndtw0\kerning0
+cd ../..;\cf2 \kerning1\expnd0\expndtw0 done\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs36 \cf0  simplified_VCF f.masclaux AMF\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf0 \'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0
+\f0\b0 \cf2 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+CREATE ALL POSITIONS FILE in folder:\
+\pard\tx264\pardeftab708\ri468\partightenfactor0
+
+\f3\fs20 \cf5 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 perl /scratch/cluster/monthly/imateus/GENOMES/simplified_VCF/Record_all_positions_from_VCF.pl\
+
+\f0\fs16 \cf0 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \
+generate coverage of samples\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf2 \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T7_SNP_UMAP_AMF_"$folder;cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J samdepth$folder -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N "\cf30  \cf2 module add UHTS/Analysis/samtools/1.\cf15 2\cf2 ; samtools depth \cf26 \expnd0\expndtw0\kerning0
+UMAP_AMF_"\kerning1\expnd0\expndtw0 $foldername"\cf30 _split.bam\cf2  > \cf26 \expnd0\expndtw0\kerning0
+"\kerning1\expnd0\expndtw0 $foldername"\cf2 .coverage\cf30 \expnd0\expndtw0\kerning0
+ \cf26 ";\cf30  \cf26 cd ../..; done\
+\
+\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 Before move all files into same folder.\
+\
+\
+create subVCF\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf26 \
+\pard\tx264\pardeftab708\ri468\partightenfactor0
+\cf2 \kerning1\expnd0\expndtw0 for i in $(ls *.coverage); do echo $i; a=$(echo $i | cut -d'.' -f1); b=$(ls *_$(printf %q "$\{a\}_")*.vcf); echo $b; bsub -q dee-hugemem -L /bin/bash -J RsVCF_$a -u ivandario.mateusgonzalez@unil.ch -N -R "rusage[mem=24000]" -M 24000000 "perl 
+\f3\fs20 \cf5 \cb0 \CocoaLigature0 /scratch/cluster/monthly/imateus/GENOMES/simplified_VCF/Simplified_VCF_maker.pl 
+\f0\fs16 \cf2 \cb1 \CocoaLigature1 All_positions_with_variants
+\f1\b \cf14 \ul *
+\f0\b0 \cf2 \ulnone  $i $b  "; done\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 \
+#################################\
+\
+\
+\
+#################################\
+# ploidy defined as 2. -p2 test\
+for folder in $(ls -d SNP*/); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T6_SNP_YUCA_"$folder;cd $folder
+\f1\b \cf0 ;
+\f0\b0 \cf2  bsub -q dee-hugemem -L /bin/bash -J freebayes$folder -u \cf31 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=36000]" -M 36000000 " export PATH=/software/bin:$PATH; module add UHTS/Analysis/freebayes/0.\cf15 9.9.2\cf2 ; freebayes -f 
+\f3\fs20 \cf5 \cb0 \CocoaLigature0 /scratch/cluster/monthly/imateus/GENOMES/
+\f0 Mesculenta_305_v6.fa
+\f3  
+\f0\fs16 \cf2 \cb1 \CocoaLigature1  \cf15 -p 2 -J -K -F 0.1 -0\cf2  \cf14 -u\cf2  -v \cf26 \expnd0\expndtw0\kerning0
+Cassava_V4-12\cf30 \kerning1\expnd0\expndtw0 _\cf2 freebay2.vcf -b *_V4-12\cf30 _split.bam\cf2 ";\cf26 \expnd0\expndtw0\kerning0
+cd ..;\cf2 \kerning1\expnd0\expndtw0  done\
+\
+for folder in $(ls -d SNP*/); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T6_SNP_YUCA_"$folder;cd $folder
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J samdepth$folder -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N "\cf30  \cf2 module add UHTS/Analysis/samtools/1.\cf15 2\cf2 ; samtools depth \cf26 \expnd0\expndtw0\kerning0
+Cassava_V4-12\cf30 \kerning1\expnd0\expndtw0 _split.bam\cf2  > \cf26 \expnd0\expndtw0\kerning0
+V4-12\cf2 \kerning1\expnd0\expndtw0 .coverage\cf30 \expnd0\expndtw0\kerning0
+ \cf26 ";\cf30  \cf26 cd ..; done\
+\cf2 \kerning1\expnd0\expndtw0 \
+for folder in $(ls *.vcf); do echo "-> "$folder;
+\f1\b \cf0  
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J vcffil$folder -u \cf31 ivandario.mateusgonzalez\cf2 @unil.ch -N "\
+\pard\pardeftab720\partightenfactor0
+
+\fs24 \cf28 \cb32 module add UHTS/Analysis/vcflib/2014.10.17;
+\fs16 \cf2 \cb1  vcffilter -f 'DP > \cf15 10\cf2 ' \cf26 \expnd0\expndtw0\kerning0
+$folder\cf2 \kerning1\expnd0\expndtw0  | vcffilter -f 'QUAL > \cf15 30\cf2 ' > $(echo $folder | cut -d"." -f1)"FDP10Q30.vcf"" \cf26 \expnd0\expndtw0\kerning0
+;\cf2 \kerning1\expnd0\expndtw0 done\
+\
+compress\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls *.vcf); do echo "-> "$folder; bsub -q dee-hugemem -L /bin/bash -J Bgzip$folder -u \cf31 ivandario.mateusgonzalez\cf2 @unil.ch -N\cf0 \expnd0\expndtw0\kerning0
+ \cf2 \kerning1\expnd0\expndtw0 "\cf30 \expnd0\expndtw0\kerning0
+module add UHTS/Analysis/vcftools/0.1.12b;\cf26 module add UHTS/Quality_control/Reapr/1.0.16;\kerning1\expnd0\expndtw0  \CocoaLigature0 gzip  \expnd0\expndtw0\kerning0
+\CocoaLigature1 $i\cf2 \kerning1\expnd0\expndtw0  \cf30 "\cf2 ; done\
+\pard\pardeftab720\partightenfactor0
+\cf2 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 #################################\
+\
+\
+\pard\tx9836\pardeftab708\ri40\partightenfactor0
+\cf2 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \
+\
+\
+\pard\pardeftab708\ri1576\partightenfactor0
+
+\f0\b0\fs24 \cf0 \expnd0\expndtw0\kerning0
+merge VCF
+\fs16 \
+compress with bgzip\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \kerning1\expnd0\expndtw0 for folder in $(ls -d V*/); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T6_SNP_YUCA_"$folder;cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J Bgzip$folder -u \cf31 ivandario.mateusgonzalez\cf2 @unil.ch -N\cf0 \expnd0\expndtw0\kerning0
+ \cf2 \kerning1\expnd0\expndtw0 "\cf30 \expnd0\expndtw0\kerning0
+module add UHTS/Analysis/vcftools/0.1.12b;\cf26 module add UHTS/Quality_control/Reapr/1.0.16;\kerning1\expnd0\expndtw0  \CocoaLigature0 bgzip -c \expnd0\expndtw0\kerning0
+\CocoaLigature1 Cassava_'\kerning1\expnd0\expndtw0 $foldername'\cf30 _\cf2 FDP10Q30\cf30 .vcf\cf26 \CocoaLigature0  >\cf30  \cf26 \expnd0\expndtw0\kerning0
+\CocoaLigature1 Cassava_'\kerning1\expnd0\expndtw0 $foldername'\cf30 _\cf2 FDP10Q30\cf30 .vcf.gz"\cf2 ; \cf26 \expnd0\expndtw0\kerning0
+cd ../..;\cf2 \kerning1\expnd0\expndtw0 done\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \kerning1\expnd0\expndtw0 index files\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 for folder in $(ls -d V*/); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T6_SNP_YUCA_"$folder;cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J tabixin$folder -u \cf31 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=18000]" -M 18000000 "\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf30 \expnd0\expndtw0\kerning0
+module add UHTS/Analysis/vcftools/0.1.12b;\cf26 module add UHTS/Quality_control/Reapr/1.0.16;\kerning1\expnd0\expndtw0  \cf30 \CocoaLigature0 tabix -p vcf \cf26  \expnd0\expndtw0\kerning0
+\CocoaLigature1 Cassava_\kerning1\expnd0\expndtw0 '$foldername'\cf30 _\cf2 FDP10Q30.vcf.gz\cf26 \CocoaLigature0  \cf30 \CocoaLigature1 "; \cf26 \expnd0\expndtw0\kerning0
+cd ../..;\cf2 \kerning1\expnd0\expndtw0  done\cf30 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J merge-vcf -u \cf31 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=18000]" -M 18000000 "
+\f1\b \cf0 \
+\pard\pardeftab720\partightenfactor0
+
+\f0\b0\fs24 \cf0 \expnd0\expndtw0\kerning0
+module add UHTS/Quality_control/Reapr/1.0.16;module add UHTS/Analysis/vcftools/0.1.12b; vcf-merge $(
+\f3\fs20 \cf5 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 ls -1 RNA_V*/V*/T6_SNP_YUCA_V*/*30.vcf.gz | perl -pe 's/\\n/ /g'
+\f0\fs24 \cf0 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 ) > test_merged.vcf"\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs16 \cf0 \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 \
+for folder in $(ls -d V*/); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T6_SNP_YUCA_"$folder;cd $runDir
+\f1\b \cf0 ;
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J merge-vcf -u \cf31 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=18000]" -M 18000000 "
+\f1\b \cf0 \
+\pard\pardeftab720\partightenfactor0
+
+\f0\b0\fs24 \cf0 \expnd0\expndtw0\kerning0
+module add UHTS/Quality_control/Reapr/1.0.16;module add UHTS/Analysis/vcftools/0.1.12b; vcf-merge $(
+\f3\fs20 \cf5 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 ls -1 
+\f0\fs16 \cf26 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 Cassava_\kerning1\expnd0\expndtw0 '$foldername'\cf30 _\cf2 FDP10Q30.vcf.gz \cf26 \expnd0\expndtw0\kerning0
+Cassava_\kerning1\expnd0\expndtw0 '$foldername'\cf30 _\cf2 FDP10Q30.vcf.gz
+\f3\fs20 \cf5 \cb0 \CocoaLigature0  | perl -pe 's/\\n/ /g'
+\f0\fs24 \cf0 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 ) > test_merged.vcf"
+\fs16 \cf30 \kerning1\expnd0\expndtw0 ; \cf26 \expnd0\expndtw0\kerning0
+cd ../..;\cf2 \kerning1\expnd0\expndtw0  done
+\fs24 \cf0 \expnd0\expndtw0\kerning0
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf2 \kerning1\expnd0\expndtw0 \
+\
+\
+WITH GATK\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+Variant calling select only SNP\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf30 \kerning1\expnd0\expndtw0 for i in $(ls *.vcf); do echo $i;\cf2 bsub -q dee-hugemem -L /bin/bash -J VCF1$i -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=24000]" -M 24000000 " \cf30 \CocoaLigature0 module add UHTS/Analysis/GenomeAnalysisTK/3.5;GenomeAnalysisTK\expnd0\expndtw0\kerning0
+\CocoaLigature1  -T SelectVariants -R \kerning1\expnd0\expndtw0 /home/fmasclau/MesDocs/Sequences/Genomes/
+\fs20 \cf5 \cb0 \CocoaLigature0 Mesculenta_305_v6.fa
+\fs16 \cf30 \cb1 \CocoaLigature1  -V $i -L 20 -selectType SNP -o $(echo $i | cut -d"." -f1)_snp.vcf ";done\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf2 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 Variant filter\cf2 \kerning1\expnd0\expndtw0 \
+for i in $(ls *\cf30 snp.vcf\cf2 ); do echo $\cf30 i; \cf2 bsub -q dee-hugemem -L /bin/bash -J VCF$i -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=24000]" -M 24000000 "\cf30 \CocoaLigature0 module add UHTS/Analysis/GenomeAnalysisTK/3.5;GenomeAnalysisTK\expnd0\expndtw0\kerning0
+\CocoaLigature1  -T VariantFiltration -R /\kerning1\expnd0\expndtw0 home/fmasclau/MesDocs/Sequences/Genomes/
+\fs20 \cf5 \cb0 \CocoaLigature0 Mesculenta_305_v6.fa
+\fs16 \cf30 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1  -V $i -window 35 -cluster 3 -filterName FS -filter 'FS>30.0' -filterName QD -filter 'QD<2.0' -o \kerning1\expnd0\expndtw0 $(echo $i | cut -d"." -f1)_Filtered.vcf \cf2 "\cf30 ;don\cf2 e\cf0 \expnd0\expndtw0\kerning0
+\
+\
+Sorting data\cf2 \kerning1\expnd0\expndtw0 \
+rm *RG.bam\
+rm *dedup.ba[m,i]\
+rm *_split.ba[m,i]\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs36 \cf0  AMF SNP calling from RNA-seq. with GATK\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf0 \'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\
+\pard\pardeftab708\ri1576\partightenfactor0
+
+\f0\b0 \cf0 MOVE ALL BAM INTO A FOLDER\
+\
+\
+adding headers to bam.file\cf25 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf26 for i in $(ls *.bam); do echo $i;\cf2 bsub -q dee-hugemem -L /bin/bash -J addhed$i -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N "\cf26 \expnd0\expndtw0\kerning0
+module add UHTS/Analysis/picard-tools/1.130;java -jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /software/UHTS/Analysis/picard-tools/1.130/bin/picard.jar\expnd0\expndtw0\kerning0
+\CocoaLigature1  AddOrReplaceReadGroups I=  \kerning1\expnd0\expndtw0 $i\expnd0\expndtw0\kerning0
+ O= \kerning1\expnd0\expndtw0 $(echo $i | cut -d"." -f1)"RG.bam"\expnd0\expndtw0\kerning0
+ SO=coordinate RGID=id RGLB=library RGPL=platform RGPU=machine RGSM=sample" ;done\
+\
+\kerning1\expnd0\expndtw0 for i in $(ls *RGRG.bam); do echo $i;\cf2 bsub -q dee-hugemem -L /bin/bash -J addhed$i2 -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=24000]" -M 24000000 "\cf26 \expnd0\expndtw0\kerning0
+module add UHTS/Analysis/picard-tools/1.130;java -jar \kerning1\expnd0\expndtw0 \CocoaLigature0 /software/UHTS/Analysis/picard-tools/1.130/bin/picard.jar\expnd0\expndtw0\kerning0
+\CocoaLigature1  MarkDuplicates I=$i O=\kerning1\expnd0\expndtw0 $(echo $i | cut -d"." -f1)"_dedup.bam"\expnd0\expndtw0\kerning0
+  CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT M=output.metrics" ;done\
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \
+\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 Split'N'Trim and reassign mapping qualities\kerning1\expnd0\expndtw0 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf30 for i in $(ls *_dedup.bam); do echo $i;\cf2 bsub -q dee-hugemem -L /bin/bash -J sptrim$i -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=24000]" -M 24000000 "\cf30  \CocoaLigature0 module add UHTS/Analysis/GenomeAnalysisTK/3.5;GenomeAnalysisTK\expnd0\expndtw0\kerning0
+\CocoaLigature1  -T SplitNCigarReads -R \kerning1\expnd0\expndtw0 /home/fmasclau/MesDocs/Sequences/Genomes/Glomus_Nu6_genome.fa\expnd0\expndtw0\kerning0
+ -I $i -o \kerning1\expnd0\expndtw0 $(echo $i | cut -d"." -f1)"_split.bam"\expnd0\expndtw0\kerning0
+ -rf ReassignOneMappingQuality -RMQF 255 -RMQT 60 -U ALLOW_N_CIGAR_READS\cf2 \kerning1\expnd0\expndtw0 "\cf30 \expnd0\expndtw0\kerning0
+; done\cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \kerning1\expnd0\expndtw0 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+Variant calling\cf2 \kerning1\expnd0\expndtw0 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf30 for i in $(ls *_split.bam); do echo $i;\cf2 bsub -q dee-hugemem -L /bin/bash -J VCF1$i -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=24000]" -M 24000000 " \cf30 \CocoaLigature0 module add UHTS/Analysis/GenomeAnalysisTK/3.5;GenomeAnalysisTK\expnd0\expndtw0\kerning0
+\CocoaLigature1  -T HaplotypeCaller -R \kerning1\expnd0\expndtw0 /home/fmasclau/MesDocs/Sequences/Genomes/Glomus_Nu6_genome.fa\expnd0\expndtw0\kerning0
+ -I $i -dontUseSoftClippedBases -stand_call_conf 20.0 -stand_emit_conf 20.0 -o \kerning1\expnd0\expndtw0 $(echo $i | cut -d"." -f1)".vcf" \cf2 "\cf30 ;done\cf0 \expnd0\expndtw0\kerning0
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \kerning1\expnd0\expndtw0 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+Variant calling 2 Freebayes\cf2 \kerning1\expnd0\expndtw0 \
+\pard\pardeftab708\ri812\partightenfactor0
+\cf2 a=0; for i in $(ls *\cf30 _split.bam\cf2 ); do echo $i;a=$((a + 1)); bsub -q dee-hugemem -L /bin/bash -J freebayes$a -u \cf31 ivandario.mateusgonzalez\cf2 @unil.ch -N  " export PATH=/software/bin:$PATH; module add UHTS/Analysis/freebayes/0.\cf15 9.9.2\cf2 ; freebayes -f\cf30 /home/fmasclau/MesDocs/Sequences/Genomes/Glomus_Nu6_genome.fa
+\f3\fs20 \cf5 \cb0 \CocoaLigature0  
+\f0\fs16 \cf2 \cb1 \CocoaLigature1  \cf15 -p 10 -J -K -F 0.1 -0\cf2  \cf14 -u\cf2  -v $(echo $i | cut -d'.' -f1)freebay.vcf -b $i"; done\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+Variant calling 2 Freebayes FILTER\cf2 \kerning1\expnd0\expndtw0 \
+\pard\pardeftab720\partightenfactor0
+
+\fs24 \cf28 \cb32 module add UHTS/Analysis/vcflib/2014.10.17;
+\fs16 \cf2 \cb1 \
+\pard\tx9836\pardeftab708\ri40\partightenfactor0
+\cf2 for i in $(ls 
+\f3\fs20 \cf5 \cb0 \CocoaLigature0 *
+\f0\fs16 \cf2 \cb1 \CocoaLigature1 freebay.vcf); do echo $i; vcffilter -f "DP > \cf15 10\cf2 " $i | vcffilter -f "QUAL > \cf15 30\cf2 " > $(echo $i | cut -d"." -f1)"FDP10Q30.vcf" ; done\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs36 \cf0  simplified_VCF f.masclaux\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf0 \'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0
+\f0\b0 \cf2 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+generate coverage of samples\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf2 \kerning1\expnd0\expndtw0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T6_SNP_YUCA_"$folder;cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J samdepth$folder -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N "\cf30  \cf2 module add UHTS/Analysis/samtools/1.\cf15 2\cf2 ; samtools depth \cf26 \expnd0\expndtw0\kerning0
+Cassava_"\kerning1\expnd0\expndtw0 $foldername"\cf30 _split.bam\cf2  > \cf26 \expnd0\expndtw0\kerning0
+"\kerning1\expnd0\expndtw0 $foldername"\cf2 .coverage\cf30 \expnd0\expndtw0\kerning0
+ \cf26 ";\cf30  \cf26 cd ../..; done\
+\
+\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 Before move all files into same folder.\
+\
+\
+create subVCF\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf26 \
+\pard\tx264\pardeftab708\ri468\partightenfactor0
+\cf2 \kerning1\expnd0\expndtw0 for i in $(ls *.coverage); do echo $i; a=$(echo $i | cut -d'.' -f1); b=$(ls *_$(printf %q "$\{a\}_")*.vcf); echo $b; bsub -q dee-hugemem -L /bin/bash -J RsVCF_$a -u ivandario.mateusgonzalez@unil.ch -N -R "rusage[mem=24000]" -M 24000000 "perl 
+\f3\fs20 \cf5 \cb0 \CocoaLigature0 /scratch/cluster/monthly/imateus/GENOMES/simplified_VCF/Simplified_VCF_maker.pl 
+\f0\fs16 \cf2 \cb1 \CocoaLigature1 All_positions_with_variants
+\f1\b \cf14 \ul *
+\f0\b0 \cf2 \ulnone  $i $b  "; done\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \
+\
+\
+\
+\
+\
+\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+Variant calling select only SNP\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf30 \kerning1\expnd0\expndtw0 for i in $(ls *.vcf); do echo $i;\cf2 bsub -q dee-hugemem -L /bin/bash -J VCF1$i -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=24000]" -M 24000000 " \cf30 \CocoaLigature0 module add UHTS/Analysis/GenomeAnalysisTK/3.5;GenomeAnalysisTK\expnd0\expndtw0\kerning0
+\CocoaLigature1  -T SelectVariants -R \kerning1\expnd0\expndtw0 /home/fmasclau/MesDocs/Sequences/Genomes/Glomus_Nu6_genome.fa -V $i -L 20 -selectType SNP -o $(echo $i | cut -d"." -f1)_snp.vcf ";done\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf2 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf0 Variant filter\cf2 \kerning1\expnd0\expndtw0 \
+for i in $(ls *\cf30 snp.vcf\cf2 ); do echo $\cf30 i; \cf2 bsub -q dee-hugemem -L /bin/bash -J VCF$i -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -R "rusage[mem=24000]" -M 24000000 "\cf30 \CocoaLigature0 module add UHTS/Analysis/GenomeAnalysisTK/3.5;GenomeAnalysisTK\expnd0\expndtw0\kerning0
+\CocoaLigature1  -T VariantFiltration -R /\kerning1\expnd0\expndtw0 home/fmasclau/MesDocs/Sequences/Genomes/Glomus_Nu6_genome.fa\expnd0\expndtw0\kerning0
+ -V $i -window 35 -cluster 3 -filterName FS -filter 'FS>30.0' -filterName QD -filter 'QD<2.0' -o \kerning1\expnd0\expndtw0 $(echo $i | cut -d"." -f1)_Filtered.vcf \cf2 "\cf30 ;don\cf2 e\cf0 \expnd0\expndtw0\kerning0
+\
+\
+Sorting data\cf2 \kerning1\expnd0\expndtw0 \
+rm *RG.bam\
+rm *dedup.ba[m,i]\
+rm *_split.ba[m,i]\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f3\fs20 \cf5 \cb10 \CocoaLigature0 for i in $(ls *RG.bam)\cf0 ; do 
+\fs24 \cf28 \CocoaLigature1 module add UHTS/Analysis/samtools/1.1;echo $i;
+\f6\fs26 \cf0 \cb1 samtools view -c -F 4 $i;done\
+\
+\pard\pardeftab720\partightenfactor0
+
+\f2\fs22 \cf0 \expnd0\expndtw0\kerning0
+for i in $(ls *.
+\f3\fs20 \cf5 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 abundance.tsv
+\f2\fs22 \cf0 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 );do echo $i; cat $i | awk '$5 > 10 ' |wc -l ;done
+\f7\fs28 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f0\fs20 \cf26 \kerning1\expnd0\expndtw0 \CocoaLigature0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs36 \cf0 \CocoaLigature1 Check SNP of B1 on double-inoculations\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf0 \'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0
+\f0\b0\fs18 \cf2 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\partightenfactor0
+
+\fs20 \cf5 \kerning1\expnd0\expndtw0 \CocoaLigature0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs16 \cf0 \CocoaLigature1 CREATE SNP DATABASE ON B1 (BED FORMAT)\
+Extract all SNP (Mono-alleles) of B1.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f0\b0 \cf26 \CocoaLigature0 grep '[[:space:]]S[[:space:]]' B1-F_20150703.subVCF | cut -f '2,4' > SNP_B1.bed\cf0 \
+format: Scaffold Position
+\fs22 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs16 \cf0 \CocoaLigature1 CREATE SNP DATABASE ON R. irregularis (BED FORMAT)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f3\b0\fs20 \cf5 \cb0 \CocoaLigature0 perl -pi -e 's/\\r/\\n/g' /scratch/cluster/monthly/imateus/GENOMES/SNP_Rirr.bed \
+\pard\pardeftab708\ri1576\partightenfactor0
+
+\f0\fs22 \cf0 \cb1 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+\cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs16 \cf0 \CocoaLigature1 CREATE BED file by generating a 1st column of SNP in excel. for each position subtract 1 position.\
+final format: Scaffold   Position-1 Position\
+\
+\
+Check positions where B1 show an SNP. \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f8\i\b0 \cf0 if there is coinoculation between CAN and B1, we expect to see an heterozygous call (0/1).\
+if there is no coinoculation and only B1, we expect (1/1)\
+if there is no coinoculation and only CAN, we expect (0/0)
+\f0\i0\fs20 \cf5 \CocoaLigature0 \
+\pard\pardeftab720\partightenfactor0
+
+\fs24 \cf28 \expnd0\expndtw0\kerning0
+\CocoaLigature1 \
+
+\f1\b\fs16 \cf0 compress vcf file
+\f0\b0   \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf2 \kerning1\expnd0\expndtw0 for i in $(ls *\cf26 \CocoaLigature0 _dedup_split_Filtered.vcf\cf2 \CocoaLigature1 ); do echo $\cf30 i; \cf2 bsub -q dee-hugemem -L /bin/bash -J VCF$i -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N  "\cf30 \expnd0\expndtw0\kerning0
+module add UHTS/Analysis/vcftools/0.1.12b;\cf26 module add UHTS/Quality_control/Reapr/1.0.16;\kerning1\expnd0\expndtw0  \CocoaLigature0 bgzip -c $i >\cf30  \CocoaLigature1 $(echo $i | cut -d"_" -f2).vcf.gz" ; done \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+\cf0 \CocoaLigature0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f1\b \cf0 create index of compressed file
+\f0\b0 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf2 \CocoaLigature1 for i in $(ls *\cf30 \CocoaLigature0 .vcf.gz\cf2 \CocoaLigature1 ); do echo $\cf30 i; \cf2 bsub -q dee-hugemem -L /bin/bash -J VCF$i -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N  "\cf30 \expnd0\expndtw0\kerning0
+module add UHTS/Analysis/vcftools/0.1.12b;\cf26 module add UHTS/Quality_control/Reapr/1.0.16;\kerning1\expnd0\expndtw0  \cf30 \CocoaLigature0 tabix -p vcf \cf26  $i \cf30 \CocoaLigature1 "; done \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+\cf30 \CocoaLigature0 \
+tabix -p vcf V5-19.vcf.gz\CocoaLigature1 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+\cf0 \CocoaLigature0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \CocoaLigature1 Final Results of founded SNP.
+\f0\b0 \CocoaLigature0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+\cf0 total loci that contain more than 10 reads of depth coverage if very low means that there is only CAN\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+\cf30 tabix -fB V5-19.vcf.gz 
+\f2\fs22 \cf0 /scratch/cluster/monthly/imateus/GENOMES/
+\f0\fs16 \cf30 SNP_Rirr.bed| cut -f '1,2,9,10' | tr ':' '\\t' | awk '$10 >9' | wc -l\cf0 \
+show total Nb. of markers with Depth coverage > 10 that show the co-inoculation.\
+\cf30 tabix -fB V5-19.vcf.gz /scratch/cluster/monthly/imateus/RNA_VF/BAM_FILES_Rirregularis/\cf26 subVCF_comparison_RAD/\cf30 SNP_B1_b.bed.txt | cut -f '1,2,9,10' | tr ':' '\\t' | awk '$10 >9' | awk '$8=="0/1" \{count++\} END \{ print count \}'\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+\cf0 show total Nb. of markers with Depth coverage > 10 that show single-inoculation of CAN.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+\cf30 tabix -fB V5-19.vcf.gz /scratch/cluster/monthly/imateus/RNA_VF/BAM_FILES_Rirregularis/\cf26 subVCF_comparison_RAD/\cf30 SNP_B1_b.bed.txt | cut -f '1,2,9,10' | tr ':' '\\t' | awk '$10 >9' | awk '$8=="0/0" \{count++\} END \{ print count \}'\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+\cf0 show total Nb. of markers with Depth coverage > 10 that show single-inoculation of B1.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+\cf30 tabix -fB V5-19.vcf.gz /scratch/cluster/monthly/imateus/RNA_VF/BAM_FILES_Rirregularis/\cf26 subVCF_comparison_RAD/\cf30 SNP_B1_b.bed.txt | cut -f '1,2,9,10' | tr ':' '\\t' | awk '$10 >9' | awk '$8=="1/1" \{count++\} END \{ print count \}'\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+\cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf0 \CocoaLigature1 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f3 \cf5 \cb0 \CocoaLigature0 ls -1 *vcf.gz > files\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f0 \cf2 \cb1 \CocoaLigature1 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f3 \cf5 \cb0 \CocoaLigature0  for i in $(ls *vcf.gz);do 
+\f0 \cf30 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 module add UHTS/Analysis/vcftools/0.1.12b;\cf26 module add UHTS/Quality_control/Reapr/1.0.16;
+\f3 \cf5 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 tabix -fB $i /scratch/cluster/monthly/imateus/RNA_VF/BAM_FILES_Rirregularis/subVCF_comparison_RAD/SNP_B1_b.bed.txt | cut -f '1,2,9,10' | tr ':' '\\t' | awk '$10 >9' | wc -l;done > ALL_LOCI\
+\
+ for i in $(ls *vcf.gz);do 
+\f0 \cf30 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 module add UHTS/Analysis/vcftools/0.1.12b;\cf26 module add UHTS/Quality_control/Reapr/1.0.16; 
+\f3 \cf5 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 tabix -fB $i /scratch/cluster/monthly/imateus/RNA_VF/BAM_FILES_Rirregularis/subVCF_comparison_RAD/SNP_B1_b.bed.txt | cut -f '1,2,9,10' | tr ':' '\\t' | awk '$10 >9' 
+\f0 \cf30 \cb1 | awk '$8=="0/1" \{count++\} END \{ print count \}'
+\f3 \cf5 \cb0 ;done > COINOCULATED_LOCI\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f0 \cf30 \cb1 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f3 \cf5 \cb0 for i in $(ls *vcf.gz);do 
+\f0 \cf30 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 module add UHTS/Analysis/vcftools/0.1.12b;\cf26 module add UHTS/Quality_control/Reapr/1.0.16; 
+\f3 \cf5 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 tabix -fB $i /scratch/cluster/monthly/imateus/RNA_VF/BAM_FILES_Rirregularis/subVCF_comparison_RAD/SNP_B1_b.bed.txt | cut -f '1,2,9,10' | tr ':' '\\t' | awk '$10 >9' 
+\f0 \cf30 \cb1 | awk '$8=="0/0" \{count++\} END \{ print count \}'
+\f3 \cf5 \cb0 ;done > CAN_ONLY\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f0 \cf30 \cb1 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f3 \cf5 \cb0 for i in $(ls *vcf.gz);do 
+\f0 \cf30 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 module add UHTS/Analysis/vcftools/0.1.12b;\cf26 module add UHTS/Quality_control/Reapr/1.0.16; 
+\f3 \cf5 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 tabix -fB $i /scratch/cluster/monthly/imateus/RNA_VF/BAM_FILES_Rirregularis/subVCF_comparison_RAD/SNP_B1_b.bed.txt | cut -f '1,2,9,10' | tr ':' '\\t' | awk '$10 >9' 
+\f0 \cf30 \cb1 | awk '$8=="1/1" \{count++\} END \{ print count \}'
+\f3 \cf5 \cb0 ;done > B1_ONLY\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f0 \cf30 \cb1 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f3 \cf5 \cb0 paste files ALL_LOCI COINOCULATED_LOCI CAN_ONLY B1_ONLY > SNP_ANALYSIS_MYCORRHIZATION.txt\
+\
+echo " ALL_LOCI COINOCULATED_LOCI CAN_ONLY B1_ONLY " >> SNP_ANALYSIS_MYCORRHIZATION.txt\
+\
+rm ALL_LOCI; rm COINOCULATED_LOCI; rm CAN_ONLY; rm B1_ONLY;\
+\
+\
+\
+WITH R IRREGULARIS COMPARISON\
+\
+ls -1 *vcf.gz > files\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f0 \cf2 \cb1 \CocoaLigature1 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f3 \cf5 \cb0 \CocoaLigature0  for i in $(ls *vcf.gz);do 
+\f0 \cf30 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 module add UHTS/Analysis/vcftools/0.1.12b;\cf26 module add UHTS/Quality_control/Reapr/1.0.16;
+\f3 \cf5 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 tabix -fB $i 
+\fs20 /scratch/cluster/monthly/imateus/GENOMES/SNP_Rirr.bed
+\fs16  | cut -f '1,2,9,10' | tr ':' '\\t' | awk '$10 >9' | wc -l;done > ALL_LOCI\
+\
+ for i in $(ls *vcf.gz);do 
+\f0 \cf30 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 module add UHTS/Analysis/vcftools/0.1.12b;\cf26 module add UHTS/Quality_control/Reapr/1.0.16; 
+\f3 \cf5 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 tabix -fB $i 
+\fs20 /scratch/cluster/monthly/imateus/GENOMES/SNP_Rirr.bed
+\fs16  | cut -f '1,2,9,10' | tr ':' '\\t' | awk '$10 >9' 
+\f0 \cf30 \cb1 | awk '$8=="0/1" \{count++\} END \{ print count \}'
+\f3 \cf5 \cb0 ;done > COINOCULATED_LOCI\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f0 \cf30 \cb1 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f3 \cf5 \cb0 for i in $(ls *vcf.gz);do 
+\f0 \cf30 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 module add UHTS/Analysis/vcftools/0.1.12b;\cf26 module add UHTS/Quality_control/Reapr/1.0.16; 
+\f3 \cf5 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 tabix -fB $i 
+\fs20 /scratch/cluster/monthly/imateus/GENOMES/SNP_Rirr.bed
+\fs16  | cut -f '1,2,9,10' | tr ':' '\\t' | awk '$10 >9' 
+\f0 \cf30 \cb1 | awk '$8=="0/0" \{count++\} END \{ print count \}'
+\f3 \cf5 \cb0 ;done > CAN_ONLY\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f0 \cf30 \cb1 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f3 \cf5 \cb0 for i in $(ls *vcf.gz);do 
+\f0 \cf30 \cb1 \expnd0\expndtw0\kerning0
+\CocoaLigature1 module add UHTS/Analysis/vcftools/0.1.12b;\cf26 module add UHTS/Quality_control/Reapr/1.0.16; 
+\f3 \cf5 \cb0 \kerning1\expnd0\expndtw0 \CocoaLigature0 tabix -fB $i 
+\fs20 /scratch/cluster/monthly/imateus/GENOMES/SNP_Rirr.bed
+\fs16  | cut -f '1,2,9,10' | tr ':' '\\t' | awk '$10 >9' 
+\f0 \cf30 \cb1 | awk '$8=="1/1" \{count++\} END \{ print count \}'
+\f3 \cf5 \cb0 ;done > B1_ONLY\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f0 \cf30 \cb1 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f3 \cf5 \cb0 paste files ALL_LOCI COINOCULATED_LOCI CAN_ONLY B1_ONLY > SNP_ANALYSIS_MYCORRHIZATION_Rirr.txt\
+\
+echo " ALL_LOCI COINOCULATED_LOCI CAN_ONLY B1_ONLY " >> SNP_ANALYSIS_MYCORRHIZATION_Rirr.txt\
+\
+rm ALL_LOCI; rm COINOCULATED_LOCI; rm CAN_ONLY; rm B1_ONLY;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+
+\f0 \cf30 \cb1 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+\cf2 \CocoaLigature1 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b\fs36 \cf0 Genotype concordance with GATK\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf0 \'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0
+\f0\b0 \cf2 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf0 #GENOTYPE CONCORDANCE\
+to see wether samples are similar or not. not very useful to check double-inoculation..\cf26 \
+\pard\pardeftab708\ri1576\partightenfactor0
+\cf26 \expnd0\expndtw0\kerning0
+\
+\kerning1\expnd0\expndtw0 \CocoaLigature0 module add UHTS/Analysis/GenomeAnalysisTK/3.5;GenomeAnalysisTK \expnd0\expndtw0\kerning0
+\CocoaLigature1 -T GenotypeConcordance -R /\kerning1\expnd0\expndtw0 home/fmasclau/MesDocs/Sequences/Genomes/Glomus_Nu6_genome.fa \expnd0\expndtw0\kerning0
+-eval \kerning1\expnd0\expndtw0 \CocoaLigature0 RNAseqaligned_Nu6_V5-9RG_Filtered.vcf \expnd0\expndtw0\kerning0
+\CocoaLigature1 -comp  \kerning1\expnd0\expndtw0 \CocoaLigature0 RNAseqaligned_Nu6_V5-10RG_Filtered.vcf \expnd0\expndtw0\kerning0
+\CocoaLigature1 -o compV5-9_V5-10.grp\
+\
+\kerning1\expnd0\expndtw0 \CocoaLigature0 module add UHTS/Analysis/GenomeAnalysisTK/3.5;GenomeAnalysisTK \expnd0\expndtw0\kerning0
+\CocoaLigature1 -T GenotypeConcordance -R /\kerning1\expnd0\expndtw0 home/fmasclau/MesDocs/Sequences/Genomes/Glomus_Nu6_genome.fa \expnd0\expndtw0\kerning0
+-eval \kerning1\expnd0\expndtw0 \CocoaLigature0 RNAseqaligned_Nu6_V3-1RG_Filtered.vcf \expnd0\expndtw0\kerning0
+\CocoaLigature1 -comp  \kerning1\expnd0\expndtw0 \CocoaLigature0 RNAseqaligned_Nu6_V3-3RG_Filtered.vcf \expnd0\expndtw0\kerning0
+\CocoaLigature1 -o compV3-1_V3-3.grp\
+\
+\kerning1\expnd0\expndtw0 \CocoaLigature0 module add UHTS/Analysis/GenomeAnalysisTK/3.5;GenomeAnalysisTK \expnd0\expndtw0\kerning0
+\CocoaLigature1 -T GenotypeConcordance -R /\kerning1\expnd0\expndtw0 home/fmasclau/MesDocs/Sequences/Genomes/Glomus_Nu6_genome.fa \expnd0\expndtw0\kerning0
+-eval \kerning1\expnd0\expndtw0 \CocoaLigature0 RNAseqaligned_Nu6_V3-2RG_Filtered.vcf \expnd0\expndtw0\kerning0
+\CocoaLigature1 -comp  \kerning1\expnd0\expndtw0 \CocoaLigature0 RNAseqaligned_Nu6_V3-3RG_Filtered.vcf \expnd0\expndtw0\kerning0
+\CocoaLigature1 -o compV3-2_V3-3.grp\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab708\pardirnatural\partightenfactor0
+\cf26 \kerning1\expnd0\expndtw0 \
+\pard\pardeftab720\partightenfactor0
+
+\fs20 \cf26 \CocoaLigature0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf2 \CocoaLigature1 \
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\pard\tx3877\tx9836\pardeftab708\ri36\partightenfactor0
+
+\f1\b\fs36 \cf15 Essai........................................\cf0 \
+\pard\tx533\tx9860\pardeftab708\fi557\partightenfactor0
+
+\fs28 \cf0 STAR  -  2-pass mapping with re-generated genome.\
+
+\fs16 \
+Index the genome with STAR for 1st-pass mapping\
+
+\f0\b0 \cf2 mkdir Genome_file_indexed_with_STAR_1st-pass #\cf0 (do not create this folder in the folder "RNAseq")\cf2 \
+cd Genome_file_indexed_with_STAR_1st-pass\
+MyGenomeDir1=$(pwd)\
+echo $MyGenomeDir1\
+cp /home/fmasclau/MesDocs/Sequences/Genomes/\cf7 Glomus_Nu6_genome.fa\cf2  .\
+cp /home/fmasclau/MesDocs/Sequences/Genomes/\cf7 Predicted_prot_hint_Nu6.gff\cf2  .\
+
+\f1\b \cf0 \
+\pard\tx533\tx9860\tx9860\pardeftab708\fi557\partightenfactor0
+
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J StarIndex1 -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -R "rusage[mem=16000]" -M 16000000 -N -n 8 -R "span[ptile=8]" "~/MesDocs/PROG/STARstatic* --runMode genomeGenerate --genomeDir $MyGenomeDir1 --genomeFastaFiles $MyGenomeDir1/\cf7 *.fa\cf2  --runThreadN 8 --sjdbOverhang 99"
+\f1\b \cf0 \
+\pard\tx533\tx9860\pardeftab708\fi557\partightenfactor0
+\cf0 \
+\pard\tx533\tx9860\pardeftab720\fi557\partightenfactor0
+\cf0 \
+1st-pass mapping ( to generate SJ.out.tab file for each sample) \
+\pard\tx533\tx9860\pardeftab708\fi557\partightenfactor0
+
+\f0\b0 \cf2 cd Genome_file_indexed_with_STAR_1st-pass
+\f1\b \cf0 \
+
+\f0\b0 \cf2 MyGenomeDir1=$(pwd)\
+echo $MyGenomeDir1\
+
+\f1\b \cf0 \
+
+\f0\b0 \cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T4_Mapping_pass1"; mkdir $runDir; cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J 'Star-'$foldername -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -n 8 -R "span[ptile=8]" -R "rusage[mem=16000]" -M 16000000 "/home/fmasclau/MesDocs/PROG/STARstatic* 
+\f1\b \cf0  --runThreadN 8 --genomeDir 
+\f0\b0 \cf2 $MyGenomeDir1
+\f1\b \cf0  --readFilesIn ../T3*/*T3.R_1.fastq ../T3*/*T3.R_2.fastq --alignIntronMin 20 --alignIntronMax 5000 -- outFilterMismatchNmax 10 
+\f0\b0 \cf2 --sjdbOverhang 99 
+\f1\b \cf0 --outFilterIntronMotifs RemoveNoncanonical --alignEndsType EndToEnd --outSAMtype BAM SortedByCoordinate --limitGenomeGenerateRAM 14500000000 --limitBAMsortRAM 11500000000; mv SJ.out.tab $
+\f0\b0 \cf2 foldername.
+\f1\b \cf0 SJ.out.tab; rm *.bam"; cd ../..; done\
+\
+\
+Create the SJ.out.tab by filtering and merging SJ.out.tab files from all runs\
+
+\f0\b0 \cf2 mkdir Genome_file_indexed_with_STAR_2nd-pass #\cf0 (do not create this folder in the folder "RNAseq")\
+\cf2 cd Genome_file_indexed_with_STAR_2nd-pass\
+MyGenomeDir2=$(pwd)\
+cd .. \cf0 #?\cf2 \
+\
+> $MyGenomeDir2/Global.SJ.out.tab.Pass1.sjdb; for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd T4*; awk 'BEGIN \{OFS="\\t"; strChar[0]="."; strChar[1]="+"; strChar[2]="-";\} \{if($5>0)\{print $1,$2,$3,strChar[$4]\}\}'  *SJ.out.tab >> $MyGenomeDir2/Global.SJ.out.tab.Pass1.sjdb; cd ../..; done\
+\
+\pard\tx533\tx9860\pardeftab708\fi557\partightenfactor0
+\cf15 Additionnal filtering step ?\
+\cf20 This method is based on\
+https://code.google.com/p/rna-star/issues/attachmentText?id=7&aid=70001000&name=STAR_2pass.sh&token=ABZ6GAcdNyvdVUCOoX1BlSK1eNPMqS-UBg%3A1429275140441\cf15 \
+\pard\tx533\tx9860\pardeftab708\fi557\partightenfactor0
+\cf2 \
+
+\f1\b \cf0 \
+Index the genome with STAR for 2nd-pass mapping\
+
+\f0\b0 \cf2 cp /home/fmasclau/MesDocs/Sequences/Genomes/\cf7 Glomus_Nu6_genome.fa\cf2  .\
+cp /home/fmasclau/MesDocs/Sequences/Genomes/\cf7 Predicted_prot_hint_Nu6.gff\cf2  .\
+\
+bsub -q dee-hugemem -L /bin/bash -J StarIndex1 -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -R "rusage[mem=16000]" -M 16000000 -N -n 8 -R "span[ptile=8]" "~/MesDocs/PROG/STARstatic* --runMode genomeGenerate --genomeDir $MyGenomeDir2 --genomeFastaFiles $MyGenomeDir2/\cf7 Glomus_Nu6_genome.fa\cf2  --runThreadN 8 --sjdbGTFfile $MyGenomeDir2/\cf7 Predicted_prot_hint_Nu6.gff\cf2  --sjdbGTFfeatureExon CDS --sjdbGTFtagExonParentTranscript Parent --sjdbGTFtagExonParentGene ID --sjdbOverhang 99 --sjdbFileChrStartEnd $MyGenomeDir2/Global.SJ.out.tab.Pass1.sjdb"\
+\pard\tx533\tx9860\pardeftab708\fi557\partightenfactor0
+
+\fs24 \cf0 \
+\pard\tx533\tx9860\pardeftab708\fi557\partightenfactor0
+
+\f1\b\fs16 \cf0 \
+\
+2nd-pass mapping
+\f0\b0\fs24 \
+
+\fs16 \cf2 cd Genome_file_indexed_with_STAR_ 2nd-pass
+\fs24 \cf0 \
+
+\fs16 \cf2 MyGenomeDir2=$(pwd)
+\fs24 \cf0 \
+
+\fs16 \cf2 echo $MyGenomeDir2
+\fs24 \cf0 \
+
+\f1\b\fs16 \
+
+\f0\b0 \cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T5_Mapping_pass2_"$folder; mkdir $runDir; cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J 'Star-'$foldername -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -n 8 -R "span[ptile=8]" -R "rusage[mem=16000]" -M 16000000 "/home/fmasclau/MesDocs/PROG/STARstatic* 
+\f1\b \cf0  --runThreadN 8 --genomeDir 
+\f0\b0 \cf2 $MyGenomeDir2
+\f1\b \cf0  --readFilesIn ../T3*/*T3.R_1.fastq ../T3*/*T3.R_2.fastq --alignIntronMin 20 --alignIntronMax 5000 -- outFilterMismatchNmax 10 
+\f0\b0 \cf2 --sjdbOverhang 99 
+\f1\b \cf0 --outFilterIntronMotifs RemoveNoncanonical --alignEndsType EndToEnd --outSAMtype BAM SortedByCoordinate --limitGenomeGenerateRAM 14500000000 --limitBAMsortRAM 111500000000;  mv Aligned.sortedByCoord.out.bam RNAseq-aligned_$foldername.bam"; cd ../..; done\
+\pard\tx533\tx9860\pardeftab720\fi557\partightenfactor0
+\cf0 \
+\pard\tx533\tx9860\pardeftab708\fi557\partightenfactor0
+
+\fs36 \cf0  \
+\pard\tx3877\tx9836\pardeftab708\ri36\partightenfactor0
+\cf15 .............................................\cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf0 \
+\
+\
+\
+ Analysis with Cufflinks\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf0 \'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\'b0\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs24 \cf0 Cufflinks: Assembly and transcript calling
+\fs16  \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 mkdir GFF_files \cf0 (do not create this folder in the folder "RNAseq")
+\f1\b \
+
+\f0\b0 \cf2 cd GFF_files\
+My_GFF_folder=$(pwd)\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf0   put the .gff files in this folder\cf2 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); cd T4*; bsub -q dee-hugemem -L /bin/bash -J Cufflinks -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -n 8 -R "span[ptile=8]" -R "rusage[mem=16000]" -M 16000000 "module add UHTS/Assembler/cufflinks/2.2.1; 
+\f1\b cufflinks
+\f0\b0  -o $foldername -p 8 --library-type fr-firststrand -g $MyGenomeDir1/\cf15 Pred*\cf0 .gff \cf2  -b /home/fmasclau/MesDocs/Sequences/Genomes/\cf7 Glomus_Nu6_genome.fa\cf2  *.bam"; cd ../..; done\
+\pard\tx9860\pardeftab720\partightenfactor0
+\cf2 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf14 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 sorting into folders
+\f0\b0 \cf14 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd T4*; mv T2*/*.T3.* T3*/; cd ..; done\
+\pard\tx9860\pardeftab720\partightenfactor0
+
+\f1\b \cf0 \
+\
+\
+\pard\tx9860\pardeftab720\partightenfactor0
+
+\fs24 \cf0 Cuffmerge: Reconciling different transcript models
+\fs16 \
+\
+make the "manifest" file\
+\pard\tx9860\pardeftab720\partightenfactor0
+
+\f0\b0 \cf2 mkdir
+\f1\b \cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd 
+\f1\b \cf0 \
+\pard\tx9860\pardeftab720\partightenfactor0
+\cf0 \
+run cuffmerge\
+\pard\tx9860\pardeftab720\partightenfactor0
+
+\f0\b0 \cf2 cuffmerge -o merged -g reference/genes.gtf -p 8 -s reference/genome.fa transcripts.txt\
+\pard\tx9860\pardeftab720\partightenfactor0
+
+\f1\b \cf0 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs24 \cf0 Cuffdiff: Differential expression analysis
+\fs16 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 cuffdiff -o cuffdiff.male_female -L male,female -p 8 -b reference/genome.fa -u merged.gtf male.1.bam,male.2.bam female.1.bam,female.2.bam\cf0 \
+\
+This will write the output of the analysis into the subfolder cuffdiff.male_female (or whatever folder name you chose) and do a pairwise comparison of the samples (Note: the order in which you list the labels needs to be the same as the order of SAM/BAM files!). We also require the data to be corrected against the genome sequence to obtain more accurate estimates (-b) as well as to resolve issues arising from reads mapping to multiple loci in the genome (-u).\
+\
+The main file of interest to us is gene_exp.diff. It includes the analysis of differential expression. Because our annotation file contained information on genes from all chromosomes but our read data was restricted to chromosome X (or whatever region you have chosen), you will find most genes to show no expression. A quick way to find the cases of interest is to filter the file for genes that show evidence of differential expression (identified by the tag \'91yes\'92 in the \'91significant\'92 column). 
+\f1\b \
+\pard\tx9860\pardeftab720\partightenfactor0
+\cf0 \
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs48 \cf13 Alternatives and old stuffs\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\fs16 \cf0 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf0 ######################################################################################################\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0    Removed 14/04/2015\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf0 ######################################################################################################\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 Index the genome with STAR\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 mkdir Genome_file_indexed_with_STAR #\cf0 (do not create this folder in the folder "RNAseq")\cf2 \
+cd Genome_file_indexed_with_STAR\
+MyGenomeDir1=$(pwd)\
+cp /home/fmasclau/MesDocs/Sequences/Genomes/\cf7 Glomus_Nu6_genome.fa\cf2  .\
+cp /home/fmasclau/MesDocs/Sequences/Genomes/\cf7 Predicted_prot_hint_Nu6.gff\cf2  .\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J StarIndex1 -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -R "rusage[mem=16000]" -M 16000000 -N -n 8 -R "span[ptile=8]" "~/MesDocs/PROG/STARstatic* --runMode genomeGenerate --genomeDir $MyGenomeDir1 --genomeFastaFiles $MyGenomeDir1/\cf7 Glomus_Nu6_genome.fa\cf2  --runThreadN 8"
+\f1\b \cf0 \
+\pard\tx9860\pardeftab720\partightenfactor0
+
+\f0\b0 \cf0 Annotations do not work with 2pass mode
+\f1\b \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 --sjdbGTFfile $MyGenomeDir1/\cf7 Predicted_prot_hint_Nu6.gff\cf2  --sjdbGTFfeatureExon CDS --sjdbGTFtagExonParentTranscript Parent --sjdbOverhang 99
+\f1\b \cf0 \
+\pard\tx9860\pardeftab720\partightenfactor0
+\cf0 \
+2-pass mapping without re-indexing genome\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 MyGenomeDir1=$(pwd)	 \cf34 #should be run in the folder containing the STAR-indexed genome\cf2 \
+echo $MyGenomeDir1\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T4_Mapping_"$folder; mkdir $runDir; cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J StarAlignAlt -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -n 8 -R "span[ptile=8]" -R "rusage[mem=16000]" -M 16000000 "/home/fmasclau/MesDocs/PROG/STARstatic* 
+\f1\b \cf0  --runThreadN 8 --genomeDir 
+\f0\b0 \cf2 $MyGenomeDir1
+\f1\b \cf0  --readFilesIn ../T3*/*T3.R_1.fastq ../T3*/*T3.R_2.fastq --alignIntronMin 20 --alignIntronMax 5000 -- outFilterMismatchNmax 10 --twopass1readsN 1500000000 
+\f0\b0 \cf2 --sjdbOverhang 99 
+\f1\b \cf0 --outFilterIntronMotifs RemoveNoncanonical --alignEndsType EndToEnd --outSAMtype BAM SortedByCoordinate --limitGenomeGenerateRAM 14500000000 --limitBAMsortRAM 11500000000; mv Aligned.sortedByCoord.out.bam RNAseq-aligned_$
+\f0\b0 \cf2 foldername
+\f1\b \cf0 .bam"; cd ../..; done\
+\
+\pard\tx9860\pardeftab720\partightenfactor0
+\cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf0 OLD command\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; foldername=$(echo $folder | sed 's/.$//'); runDir="T4_Mapping_"$folder; mkdir $runDir; cd $runDir
+\f1\b \cf0 ; 
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J StarAlignAlt -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -n 8 -R "span[ptile=8]" -R "rusage[mem=16000]" -M 16000000 "/home/fmasclau/MesDocs/PROG/STARstatic* 
+\f1\b \cf0  --runThreadN 8 --genomeDir 
+\f0\b0 \cf2 $MyGenomeDir1
+\f1\b \cf0  --readFilesIn ../T3*/*T3.R_1.fastq ../T3*/*T3.R_2.fastq --alignIntronMin 20 --alignIntronMax 5000 -- outFilterMismatchNmax 10 --twopass1readsN 15000000 
+\f0\b0 \cf2 --sjdbOverhang 99 
+\f1\b \cf0 --outSAMstrandField intronMotif --outFilterIntronMotifs RemoveNoncanonical --outSAMtype BAM SortedByCoordinate --limitGenomeGenerateRAM 14500000000 --limitBAMsortRAM 11500000000; mv Aligned.sortedByCoord.out.bam RNAseq-aligned_$
+\f0\b0 \cf2 foldername
+\f1\b \cf0 .bam"; cd ../..; done\
+\
+\pard\tx9860\pardeftab720\partightenfactor0
+\cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf0 Optionnal: to erase *T3* files because they are not needed if \ul all\ulnone  mappings finished ok
+\f0\b0 \cf14 \
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf2 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd T3*; rm -v *.T3.*fastq; cd ../..;done\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf35 for folder in $(ls -d */); do echo "-> "$folder; cd $folder; cd T4*; rm -r _STAR*; gzip SJ*; rm Log.progress.out; gzip Log.out; cd ../..;done\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf0 ######################################################################################################\
+######################################################################################################\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf35 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \
+\pard\tx9860\pardeftab720\partightenfactor0
+\cf0 Alignment 1st pass\
+\pard\tx9860\pardeftab720\partightenfactor0
+
+\f0\b0 \cf2 runDir1="1-pass"\
+mkdir $runDir1\
+cd $runDir1
+\f1\b \cf0 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J StarAlign1 -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -n 8 -R "span[ptile=8]" -R "rusage[mem=16000]" -M 16000000 "~/MesDocs/STARstatic-2.4.0 
+\f1\b \cf0  --runThreadN 8 --genomeDir 
+\f0\b0 \cf2 $MyGenomeDir1
+\f1\b \cf0  --readFilesIn *T3.R_1.fastq *T3.R_2.fastq --alignIntronMin 20 --alignIntronMax 5000 -- outFilterMismatchNmax 10"\
+\
+New index 2nd-pass\
+
+\f0\b0 \cf2 mkdir Genome_file_2nd-pass\
+cd Genome_file_2nd-pass\
+MyGenomeDir2=$(pwd)\
+cp /home/fmasclau/MesDocs/Sequences/Genomes/Glomus_Nu6_genome.fa .\
+\
+bsub -q dee-hugemem -L /bin/bash -J StarIndex2 -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -n 8 -R "span[ptile=8]" -R "rusage[mem=16000]" -M 16000000 "~/MesDocs/STARstatic-2.4.0 --runMode genomeGenerate --genomeDir $MyGenomeDir2 --genomeFastaFiles $MyGenomeDir2/Glomus_Nu6_genome.fa --sjdbFileChrStartEnd ../1-pass/SJ.out.tab --sjdbOverhang 99 --runThreadN 8"\
+\
+\pard\tx9860\pardeftab720\partightenfactor0
+
+\f1\b \cf0 Alignment 2nd-pass\
+\pard\tx9860\pardeftab720\partightenfactor0
+
+\f0\b0 \cf2 runDir2="2-pass"\
+mkdir $runDir2\
+cd $runDir2
+\f1\b \cf0 \
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f0\b0 \cf2 bsub -q dee-hugemem -L /bin/bash -J StarAlign1 -u \cf8 ivandario.mateusgonzalez\cf2 @unil.ch -N -n 8 -R "span[ptile=8]" -R "rusage[mem=16000]" -M 16000000 "~/MesDocs/STARstatic-2.4.0 
+\f1\b \cf0  --runThreadN 8 --genomeDir 
+\f0\b0 \cf2 $MyGenomeDir2
+\f1\b \cf0  --readFilesIn *T3.R_1.fastq *T3.R_2.fastq --alignIntronMin 20 --alignIntronMax 5000 -- outFilterMismatchNmax 10 --outSAMstrandField intronMotif --outFilterIntronMotifs RemoveNoncanonical --outSAMtype BAM SortedByCoordinate"
+\f0\b0 \cf2 \
+\
+\
+\
+\
+\pard\tx9860\pardeftab708\partightenfactor0
+\cf0 --sjdbOverhang xx   where xx is equal to read length - 1 (100-1=99)\cf2 \
+\pard\tx9860\pardeftab708\partightenfactor0
+
+\f1\b \cf0 \
+--outSAMstrandField intronMotif		> compatibility with Cufflinks\
+--outFilterIntronMotifs RemoveNoncanonical		> to remove the non-canonical junctions\
+--outSAMtype BAM SortedByCoordinate		> output sorted by coordinate *.bam file\
+--twopass1readsN xxx		> the number of reads you want mapped in the 1st pass\
+\
+\
+\
+\
+\
+\
+}
